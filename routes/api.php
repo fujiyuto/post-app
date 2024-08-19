@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantController;
@@ -36,6 +37,9 @@ Route::controller(PostController::class)->group(function () {
     Route::patch('/posts/{post}/edit', 'edit')->where('post', '[0-9]+')->name('posts.edit');
     // 投稿削除
     Route::delete('/posts/{post}/delete', 'delete')->where('post', '[0-9]+')->name('posts.delete');
+});
+
+Route::controller(LikeController::class)->group(function () {
     // いいねした投稿取得
     Route::get('/posts/{user}/likes', 'index_posts')->where('user', '[0-9]+')->name('likes.index_posts');
     // いいねしたユーザー取得
@@ -43,7 +47,7 @@ Route::controller(PostController::class)->group(function () {
     // いいね作成
     Route::post('/posts/{post}/likes/create', 'create')->where('post', '[0-9]+')->name('likes.create');
     // いいね削除
-    Route::delete('/posts/{post}/likes/delete', 'delete')->where('post', '[0-9]+')->name('likes.create');
+    Route::delete('/posts/{post}/likes/delete', 'delete')->where('post', '[0-9]+')->name('likes.delete');
 });
 
 Route::controller(RestaurantController::class)->group(function () {
