@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id()->comment('投稿ID');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('restaurant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('ユーザーID');
+            $table->foreignId('restaurant_id')->constrained()->onDelete('cascade')->comment('店ID');
             $table->string('title')->comment('タイトル');
             $table->text('content')->comment('内容');
             $table->date('visited_at')->nullable()->comment('訪問日');

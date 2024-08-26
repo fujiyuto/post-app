@@ -4,39 +4,45 @@ namespace App\Services;
 
 class UserService {
 
-    public function getUser()
+    public function getUser(int $user_id)
     {
 
     }
 
-    public function createUser()
+    public function createUser(
+        string $name,
+        string $email,
+        string $password,
+        int $type,
+        string $email_verifyed_at=null,
+    )
     {
 
     }
 
-    public function updateUser()
+    public function updateUser(
+        string $name,
+        string $email,
+        string $password,
+        int $type,
+        string $email_verifyed_at=null
+    )
     {
 
     }
 
-    public function deleteUser()
+    public function deleteUser(int $user_id)
     {
 
     }
 
-    public function loginUser()
+    public function loginUser(string $email, string $password)
     {
 
     }
 
-    public function logoutUser()
+    public function logoutUser(int $user_id)
     {
 
     }
-
-    public function getLikeUsers()
-    {
-        
-    }
-
 }

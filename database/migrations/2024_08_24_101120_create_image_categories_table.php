@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('likes', function (Blueprint $table) {
-            $table->id()->comment('いいねID');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('ユーザーID');
-            $table->foreignId('post_id')->constrained()->onDelete('cascade')->comment('投稿ID');
+        Schema::create('image_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('unique_cd', 4)->comment('ユニークコード');
+            $table->string('name')->comment('名前');
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('likes');
+        Schema::dropIfExists('image_categories');
     }
 };

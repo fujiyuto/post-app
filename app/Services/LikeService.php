@@ -3,22 +3,23 @@
 namespace App\Services;
 
 class LikeService {
-    public function getLikes()
-    {
-        
-    }
 
-    public function createLike()
+    public function getLikePosts(int $user_id)
     {
 
     }
 
-    public function updateLike()
+    public function getLikeUsers(int $post_id)
     {
 
     }
 
-    public function deleteLike()
+    public function createLike(int $user_id, int $post_id)
+    {
+
+    }
+
+    public function deleteLike(int $user_id, int $post_id)
     {
 
     }

@@ -24,6 +24,11 @@ class PostController extends Controller
 
     }
 
+    public function index_user(User $user)
+    {
+        
+    }
+
     public function show(Post $post)
     {
 
