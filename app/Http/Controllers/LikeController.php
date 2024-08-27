@@ -7,12 +7,15 @@ use App\Models\User;
 use App\Models\Post;
 use App\Http\Requests\LikeCreateRequest;
 use App\Http\Requests\LikeDeleteRequest;
+use App\Services\LikeService;
 
 class LikeController extends Controller
 {
-    public function __construct()
-    {
+    private $likeService;
 
+    public function __construct(LikeService $likeService)
+    {
+        $this->likeService = $likeService;
     }
 
     /**

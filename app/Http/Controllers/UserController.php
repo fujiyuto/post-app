@@ -22,31 +22,62 @@ class UserController extends Controller
 
     public function show(User $user)
     {
+        try {
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function create(UserCreateRequest $request)
     {
-
+        try {
+            $data = $this->userService->createUser(
+                $request->name,
+                $request->email,
+                $request->password,
+                $request->gender,
+                $request->user_type,
+            );
+            return response()->json($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function edit(UserEditRequest $request, User $user)
     {
+        try {
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function delete(UserDeleteRequest $request, User $user)
     {
+        try {
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function login(LoginRequest $request)
     {
+        try {
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function logout(LogoutRequest $request)
     {
+        try {
 
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

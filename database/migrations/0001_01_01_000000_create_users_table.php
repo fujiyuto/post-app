@@ -16,7 +16,8 @@ return new class () extends Migration {
             $table->string('email')->unique()->comment('メールアドレス');
             $table->timestamp('email_verified_at')->nullable()->comment('メール認証日時');
             $table->string('password')->comment('パスワード');
-            $table->unsignedTinyInteger('type')->comment('会員タイプ（1:顧客、2:店主）');
+            $table->unsignedTinyInteger('gender')->comment('性別（1:男、2:女）');
+            $table->unsignedTinyInteger('user_type')->comment('会員タイプ（1:顧客、2:店主）');
             // $table->rememberToken();
             $table->timestamps();
         });

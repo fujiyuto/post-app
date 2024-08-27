@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 class UserService {
 
     public function getUser(int $user_id)
@@ -13,19 +16,36 @@ class UserService {
         string $name,
         string $email,
         string $password,
-        int $type,
-        string $email_verifyed_at=null,
+        int    $gender,
+        int    $user_type
     )
     {
+        $insert_data = [
+            'name'      => $name,
+            'email'     => $email,
+            'password'  => Hash::make($password),
+            'gender'    => $gender,
+            'user_type' => $user_type
+        ];
 
+        if ( ! User::create($insert_data) ) {
+            // TODO
+            // 作成エラー
+        }
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
     }
 
     public function updateUser(
         string $name,
         string $email,
         string $password,
-        int $type,
-        string $email_verifyed_at=null
+        int    $gender,
+        int    $user_type
     )
     {
 
