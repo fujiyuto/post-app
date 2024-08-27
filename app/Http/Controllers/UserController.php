@@ -10,6 +10,7 @@ use App\Http\Requests\UserDeleteRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\LogoutRequest;
 use App\Services\UserService;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -66,6 +67,13 @@ class UserController extends Controller
     public function login(LoginRequest $request)
     {
         try {
+
+            $data = $this->userService->loginUser($request->email, $request->password);
+
+            // セッション再生成
+            $request->session()->regenerate();
+
+            return response()->json($data);
 
         } catch (\Exception $e) {
             throw $e;

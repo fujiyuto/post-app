@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class UserService {
 
@@ -58,7 +59,21 @@ class UserService {
 
     public function loginUser(string $email, string $password)
     {
+        $credentials = [
+            'email' => $email,
+            'password' => $password
+        ];
 
+        if ( ! Auth::guard('web')->attempt($credentials) ) {
+            // TODO
+            // 認証エラー
+        }
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
     }
 
     public function logoutUser(int $user_id)
