@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('restaurants', function (Blueprint $table) {
             $table->id()->comment('店ID');
-            $table->string('name')->comment('名前');
+            $table->string('restaurant_name')->comment('名前');
             $table->string('zip_cd', 7)->comment('郵便番号');
             $table->string('address')->comment('住所');
             $table->string('email')->nullable()->comment('メールアドレス');
-            $table->string('tel_no', 7)->comment('電話番号');
+            $table->string('tel_no')->comment('電話番号');
             $table->unsignedInteger('price_min')->nullable()->comment('価格（最小）');
             $table->unsignedInteger('price_max')->nullable()->comment('価格（最大）');
             $table->timestamps();

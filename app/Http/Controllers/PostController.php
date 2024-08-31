@@ -21,33 +21,59 @@ class PostController extends Controller
 
     public function index()
     {
+        try {
+            
+            $data = $this->postService->getPosts();
 
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function index_user(User $user)
     {
-        
+        try {
+
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function show(Post $post)
     {
+        try {
 
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function create(PostCreateRequest $request)
     {
+        try {
 
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function edit(PostEditRequest $request, Post $post)
     {
+        try {
 
+        } catch (\Exception $e) {
+
+        }
     }
 
     public function delete(PostDeleteRequest $request, Post $post)
     {
+        try {
 
+        } catch (\Exception $e) {
+
+        }
     }
-
-
 }
