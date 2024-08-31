@@ -54,7 +54,36 @@ class PostService
 
     public function getPost(int $post_id)
     {
+        $post = Post::join('users', 'posts.user_id', '=', 'users.id')
+                    ->join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
+                    ->orderByDesc('posts.id')
+                    ->first();
 
+        if ( !$post ) {
+            throw new DataNotFoundException('投稿取得エラー');
+        }
+
+        $created_datetime = new Carbon($post->created_at);
+        $created_date     = $created_datetime->format('Y-m-d');
+        $response_data[] = [
+            'id'              => $post->id,
+            'user_id'         => $post->user_id,
+            'user_name'       => $post->user_name,
+            'restaurant_id'   => $post->restaurant_id,
+            'restaurant_name' => $post->restaurant_name,
+            'title'           => $post->title,
+            'content'         => $post->content,
+            'visited_at'      => $post->visited_at,
+            'period_of_time'  => $post->period_of_time,
+            'points'          => $post->points,
+            'price_min'       => $post->price_min,
+            'price_max'       => $post->price_max,
+            'created_at'      => $created_date
+        ];
+
+        return [
+            'data' => $response_data
+        ];
     }
 
     public function createPost(

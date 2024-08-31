@@ -22,7 +22,7 @@ class PostController extends Controller
     public function index()
     {
         try {
-            
+
             $data = $this->postService->getPosts();
 
             return $this->responseJson($data);
@@ -44,6 +44,10 @@ class PostController extends Controller
     public function show(Post $post)
     {
         try {
+
+            $data = $this->postService->getPost($post->id);
+
+            return $this->responseJson($data);
 
         } catch (\Exception $e) {
 
