@@ -11,13 +11,18 @@ class Post extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'restaurant_id',
         'title',
         'content',
         'visited_at',
         'period_of_time',
         'points',
         'price_min',
-        'price_max'
+        'price_max',
+        'image_url1',
+        'image_url2',
+        'image_url3',
     ];
 
     public function user(): BelongsTo

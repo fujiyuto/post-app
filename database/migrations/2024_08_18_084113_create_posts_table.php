@@ -18,10 +18,13 @@ return new class extends Migration
             $table->string('title')->comment('タイトル');
             $table->text('content')->comment('内容');
             $table->date('visited_at')->nullable()->comment('訪問日');
-            $table->unsignedTinyInteger('period_of_time')->comment('(1:昼、2:夜)');
+            $table->unsignedTinyInteger('period_of_time')->comment('時間帯(1:昼、2:夜)');
             $table->double('points')->comment('点数');
             $table->unsignedInteger('price_min')->nullable()->comment('価格（最小）');
             $table->unsignedInteger('price_max')->nullable()->comment('価格（最大）');
+            $table->string('image_url1')->nullable()->comment('画像URL1');
+            $table->string('image_url2')->nullable()->comment('画像URL2');
+            $table->string('image_url3')->nullable()->comment('画像URL3');
             $table->timestamps();
         });
     }

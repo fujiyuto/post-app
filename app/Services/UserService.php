@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use App\Exceptions\DataOperationException;
 
 class UserService {
 
@@ -14,7 +15,7 @@ class UserService {
     }
 
     public function createUser(
-        string $name,
+        string $user_name,
         string $email,
         string $password,
         int    $gender,
@@ -22,7 +23,7 @@ class UserService {
     )
     {
         $insert_data = [
-            'name'      => $name,
+            'user_name' => $user_name,
             'email'     => $email,
             'password'  => Hash::make($password),
             'gender'    => $gender,
@@ -31,7 +32,7 @@ class UserService {
 
         if ( ! User::create($insert_data) ) {
             // TODO
-            // 作成エラー
+            throw new DataOperationException('ユーザー登録エラー');
         }
 
         return [
@@ -64,7 +65,7 @@ class UserService {
             'password' => $password
         ];
 
-        if ( ! Auth::guard('web')->attempt($credentials) ) {
+        if ( ! Auth::attempt($credentials) ) {
             // TODO
             // 認証エラー
         }

@@ -34,7 +34,7 @@ class UserController extends Controller
     {
         try {
             $data = $this->userService->createUser(
-                $request->name,
+                $request->user_name,
                 $request->email,
                 $request->password,
                 $request->gender,

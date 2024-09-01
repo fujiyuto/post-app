@@ -9,6 +9,9 @@ use App\Http\Requests\PostCreateRequest;
 use App\Http\Requests\PostEditRequest;
 use App\Http\Requests\PostDeleteRequest;
 use App\Services\PostService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -32,15 +35,6 @@ class PostController extends Controller
         }
     }
 
-    public function index_user(User $user)
-    {
-        try {
-
-        } catch (\Exception $e) {
-
-        }
-    }
-
     public function show(Post $post)
     {
         try {
@@ -50,16 +44,58 @@ class PostController extends Controller
             return $this->responseJson($data);
 
         } catch (\Exception $e) {
-
+            throw $e;
         }
     }
+
+    public function index_user(User $user)
+    {
+        try {
+
+            $data = $this->postService->getUserPosts($user->id, $user->user_name);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 
     public function create(PostCreateRequest $request)
     {
         try {
 
-        } catch (\Exception $e) {
+            // 画像保存処理
+            $image_url1 = $request->file('image_url1')
+                        ? Storage::putFile('posts', $request->file('image_url1'))
+                        : null;
+            $image_url2 = $request->file('image_url2')
+                        ? Storage::putFile('posts', $request->file('image_url2'))
+                        : null;
+            $image_url3 = $request->file('image_url3')
+                        ? Storage::putFile('posts', $request->file('image_url3'))
+                        : null;
 
+            $data = $this->postService->createPost(
+                Auth::id(),
+                $request->restaurant_id,
+                $request->title,
+                $request->content,
+                $request->visited_at,
+                $request->period_of_time,
+                $request->points,
+                $request->price_min,
+                $request->price_max,
+                $image_url1,
+                $image_url2,
+                $image_url3,
+            );
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -67,8 +103,35 @@ class PostController extends Controller
     {
         try {
 
-        } catch (\Exception $e) {
+            // 画像保存処理
+            $image_url1 = $request->file('image_url1')
+                        ? Storage::putFile('posts', $request->file('image_url1'))
+                        : null;
+            $image_url2 = $request->file('image_url2')
+                        ? Storage::putFile('posts', $request->file('image_url2'))
+                        : null;
+            $image_url3 = $request->file('image_url3')
+                        ? Storage::putFile('posts', $request->file('image_url3'))
+                        : null;
 
+            $data = $this->postService->updatePost(
+                $post,
+                $request->title,
+                $request->content,
+                $request->visited_at,
+                $request->period_of_time,
+                $request->points,
+                $request->price_min,
+                $request->price_max,
+                $image_url1,
+                $image_url2,
+                $image_url3,
+            );
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
@@ -76,8 +139,12 @@ class PostController extends Controller
     {
         try {
 
-        } catch (\Exception $e) {
+            $data = $this->postService->deletePost($request->user()->id, $post);
 
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 }

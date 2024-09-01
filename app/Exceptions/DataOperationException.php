@@ -20,6 +20,6 @@ class DataOperationException extends Exception
             'data' => [
                 'error' => 'エラーが発生しました。'
             ]
-        ], 500);
+        ], 501);
     }
 }

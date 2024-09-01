@@ -9,6 +9,8 @@ use App\Http\Requests\LikeCreateRequest;
 use App\Http\Requests\LikeDeleteRequest;
 use App\Services\LikeService;
 
+use Illuminate\Support\Facades\Log;
+
 class LikeController extends Controller
 {
     private $likeService;
@@ -26,7 +28,7 @@ class LikeController extends Controller
      */
     public function index_posts(User $user)
     {
-
+        Log::debug('aaa');
     }
 
     /**
@@ -37,16 +39,16 @@ class LikeController extends Controller
      */
     public function index_users(Post $post)
     {
-
+        Log::debug('aaa');
     }
 
     public function create(LikeCreateRequest $request)
     {
-
+        Log::debug('aaa');
     }
 
     public function delete(LikeDeleteRequest $request)
     {
-
+        Log::debug('aaa');
     }
 }

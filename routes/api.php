@@ -24,7 +24,7 @@ Route::controller(UserController::class)->group(function () {
     // 退会
     Route::delete('/users')->name('users.delete');
     // ログイン
-    Route::post('/login', 'login')->name('users.login');
+    Route::post('/login', 'login')->name('login');
     // ログアウト
     Route::post('/logout', 'logout')->name('users.logout');
 });
@@ -34,12 +34,17 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/posts', 'index')->name('posts.index');
     // 投稿詳細取得
     Route::get('/posts/{post}', 'show')->where('post', '[0-9]+')->name('posts.show');
-    // 投稿作成
-    Route::post('/posts', 'create')->name('posts.create');
-    // 投稿編集
-    Route::patch('/posts', 'edit')->name('posts.edit');
-    // 投稿削除
-    Route::delete('/posts', 'delete')->name('posts.delete');
+    // ユーザーの投稿一覧取得
+    Route::get('/posts/user/{user}', 'index_user')->where('user', '[0-9]+')->name('posts.inder_user');
+
+    Route::middleware('auth:sanctum')->group(function () {
+        // 投稿作成
+        Route::post('/posts', 'create')->name('posts.create');
+        // 投稿編集
+        Route::patch('/posts/{post}', 'edit')->where('post', '[0-9]+')->name('posts.edit');
+        // 投稿削除
+        Route::delete('/posts/{post}', 'delete')->where('post', '[0-9]+')->name('posts.delete');
+    });
 });
 
 Route::controller(LikeController::class)->group(function () {

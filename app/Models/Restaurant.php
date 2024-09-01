@@ -11,7 +11,7 @@ class Restaurant extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'restaurant_name',
         'zip_cd',
         'address',
         'email',
