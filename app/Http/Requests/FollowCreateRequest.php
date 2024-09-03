@@ -25,4 +25,10 @@ class FollowCreateRequest extends FormRequest
             'follower_id' => 'required|numeric'
         ];
     }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
+    }
 }

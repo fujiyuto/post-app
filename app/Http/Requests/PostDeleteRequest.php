@@ -25,4 +25,10 @@ class PostDeleteRequest extends FormRequest
             //
         ];
     }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
+    }
 }

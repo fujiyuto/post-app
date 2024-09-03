@@ -4,10 +4,12 @@ namespace App\Services;
 
 use App\Exceptions\DataNotFoundException;
 use App\Exceptions\DataOperationException;
+use App\Exceptions\UnauthorizationException;
 use App\Models\Post;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\UnauthorizedException;
 
 class PostService
 {
@@ -61,10 +63,6 @@ class PostService
                     ->orderByDesc('posts.id')
                     ->get();
 
-        if ( $posts->isEmpty() ) {
-            throw new DataNotFoundException('投稿一覧取得エラー');
-        }
-
         $response_data = [];
         $response_data['user'] = [
             'id'        => $user_id,
@@ -90,7 +88,6 @@ class PostService
                 'image_url3'      => $post->image_url3,
                 'created_at'      => $created_date
             ];
-
         }
 
         return [
@@ -190,6 +187,12 @@ class PostService
         string $image_url2 = null,
         string $image_url3 = null,
     ) {
+        // ユーザーチェック
+        $check = Gate::inspect('update', $post);
+        if ( $check->denied() ) {
+            throw new UnauthorizationException('不正な投稿編集');
+        }
+
         $post->title          = $title;
         $post->content        = $content;
         $post->visited_at     = $visited_at;
@@ -212,10 +215,12 @@ class PostService
         ];
     }
 
-    public function deletePost(int $user_id, Post $post)
+    public function deletePost(Post $post)
     {
-        if ( $user_id != $post->user_id ) {
-            throw new DataOperationException('投稿削除エラー');
+        // ユーザーチェック
+        $check = Gate::inspect('delete', $post);
+        if ( $check->denied() ) {
+            throw new UnauthorizationException('不正な投稿削除');
         }
 
         if ( !$post->delete() ) {

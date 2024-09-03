@@ -3,8 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Session\Middleware\StartSession;
 use App\Http\Middleware\LogRoute;
+use App\Http\Middleware\CustomAuthorizeMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,8 +16,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
         $middleware->api(append: [
-            // StartSession::class,
             LogRoute::class
+        ]);
+        $middleware->alias([
+            'customAuth' => CustomAuthorizeMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

@@ -25,4 +25,10 @@ class RestaurantEditRequest extends FormRequest
             //
         ];
     }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
+    }
 }

@@ -25,4 +25,10 @@ class UserStoreRestaurantCreateRequest extends FormRequest
             'restaurant_id' => 'required|numeric'
         ];
     }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
+    }
 }
