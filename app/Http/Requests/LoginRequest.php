@@ -26,4 +26,10 @@ class LoginRequest extends FormRequest
             'password' => 'required|string|max:255',
         ];
     }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
+    }
 }

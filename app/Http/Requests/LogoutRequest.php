@@ -11,7 +11,7 @@ class LogoutRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,5 +24,11 @@ class LogoutRequest extends FormRequest
         return [
             //
         ];
+    }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
     }
 }

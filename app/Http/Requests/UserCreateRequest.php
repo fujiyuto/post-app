@@ -22,11 +22,17 @@ class UserCreateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|string|max:255',
+            'user_name' => 'required|string|max:255',
             'email'     => 'required|email:rfc,dns|max:255',
             'password'  => 'required|string|max:255',
             'gender'    => 'required|numeric|digits:1',
             'user_type' => 'required|numeric|digits:1'
         ];
+    }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
     }
 }

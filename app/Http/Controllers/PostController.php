@@ -139,7 +139,7 @@ class PostController extends Controller
     {
         try {
 
-            $data = $this->postService->deletePost($request->user()->id, $post);
+            $data = $this->postService->deletePost($post);
 
             return $this->responseJson($data);
 

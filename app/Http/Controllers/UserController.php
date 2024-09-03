@@ -25,6 +25,10 @@ class UserController extends Controller
     {
         try {
 
+            $data = $this->userService->getUser($user);
+
+            return $this->responseJson($data);
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -50,6 +54,10 @@ class UserController extends Controller
     {
         try {
 
+            $data = $this->userService->updateUser($user, $request->user_name, $request->gender);
+
+            return $this->responseJson($data);
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -58,6 +66,10 @@ class UserController extends Controller
     public function delete(UserDeleteRequest $request, User $user)
     {
         try {
+
+            $data = $this->userService->deleteUser($user);
+
+            return $this->responseJson($data);
 
         } catch (\Exception $e) {
             throw $e;
@@ -83,6 +95,14 @@ class UserController extends Controller
     public function logout(LogoutRequest $request)
     {
         try {
+
+            $data = $this->userService->logoutUser();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return $this->responseJson($data);
 
         } catch (\Exception $e) {
             throw $e;

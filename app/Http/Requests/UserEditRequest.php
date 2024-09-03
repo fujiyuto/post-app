@@ -11,7 +11,7 @@ class UserEditRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,14 @@ class UserEditRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'user_name' => 'required|string|max:255',
+            'gender'    => 'required|numeric|digits:1'
         ];
+    }
+
+    public function messages(): array
+    {
+        // TODO
+        return [];
     }
 }
