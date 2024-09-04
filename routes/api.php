@@ -102,15 +102,15 @@ Route::controller(FollowController::class)->group(function () {
 
     Route::middleware('customAuth')->group(function () {
         // フォローユーザー取得
-        Route::get('/follows/follow', 'index_follow')->name('follows.index_follow');
+        Route::get('/follows/{user}', 'index_follow')->name('follows.index_follow');
 
         // フォロワーユーザー取得
-        Route::get('/follows/follower', 'index_follower')->name('follows.index_follower');
+        Route::get('/followers/{user}', 'index_follower')->name('follows.index_follower');
 
         // ユーザーフォロー
         Route::post('/follows', 'create')->name('follows.create');
 
         // ユーザーアンフォロー
-        Route::delete('/follows', 'delete')->name('follows.delete');
+        Route::delete('/follows/{user}', 'delete')->name('follows.delete');
     });
 });

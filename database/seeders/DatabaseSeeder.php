@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Models\Post;
+use App\Models\Follow;
 use Database\Factories\UserFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -30,6 +31,16 @@ class DatabaseSeeder extends Seeder
                 Post::factory()->create([
                     'user_id'       => $user->id,
                     'restaurant_id' => $restaurant->id
+                ]);
+            }
+        }
+
+        foreach ($users as $follow) {
+            foreach ($users as $follower) {
+                if ($follow->id === $follower->id) continue;
+                Follow::create([
+                    'follow_id' => $follow->id,
+                    'follower_id' => $follower->id
                 ]);
             }
         }
