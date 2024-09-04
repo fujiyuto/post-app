@@ -37,6 +37,7 @@ class UserController extends Controller
     public function create(UserCreateRequest $request)
     {
         try {
+
             $data = $this->userService->createUser(
                 $request->user_name,
                 $request->email,
@@ -44,7 +45,9 @@ class UserController extends Controller
                 $request->gender,
                 $request->user_type,
             );
-            return response()->json($data);
+
+            return $this->responseJson($data);
+
         } catch (\Exception $e) {
             throw $e;
         }
@@ -97,10 +100,6 @@ class UserController extends Controller
         try {
 
             $data = $this->userService->logoutUser();
-
-            $request->session()->invalidate();
-
-            $request->session()->regenerateToken();
 
             return $this->responseJson($data);
 
