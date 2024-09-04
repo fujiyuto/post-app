@@ -21,7 +21,6 @@ class UserService
         $response_data['user'] = [
             'user_name'         => $user->user_name,
             'email'             => $user->email,
-            'is_email_verified' => !is_null($user->email_verified_at),
             'gender'            => $user->gender,
             'user_type'         => $user->user_type
         ];
@@ -35,11 +34,16 @@ class UserService
             'follow_count'   => $follow_count
         ];
 
+        // 店の訪問数を集計
+        $visited_num = Post::where('user_id', $user->id)
+                            ->distinct('restaurant_id')
+                            ->count('restaurant_id');
+        $response_data['visited_count'] = $visited_num;
+
         // ユーザーの投稿一覧取得
-        $posts = Post::join('users', 'posts.user_id', '=', 'users.id')
-                    ->join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
-                    ->orderByDesc('posts.id')
-                    ->get();
+        $posts = Post::join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
+                                ->orderByDesc('posts.id')
+                                ->get();
         if ( $posts->isEmpty() ) {
             $response_data['posts'] = [];
         } else {
@@ -162,7 +166,7 @@ class UserService
 
     public function logoutUser()
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         return [
             'data' => [
