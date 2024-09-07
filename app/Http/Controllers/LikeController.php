@@ -28,7 +28,15 @@ class LikeController extends Controller
      */
     public function index_posts(User $user)
     {
-       
+        try {
+
+            $data = $this->likeService->getLikePosts($user);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -39,16 +47,52 @@ class LikeController extends Controller
      */
     public function index_users(Post $post)
     {
+        try {
 
+            $data = $this->likeService->getLikeUsers($post);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
+    /**
+     * いいね作成
+     *
+     * @param LikeCreateRequest $request
+     * @return void
+     */
     public function create(LikeCreateRequest $request)
     {
+        try {
 
+            $data = $this->likeService->createLike($request->user_id, $request->post_id);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
+    /**
+     * いいね削除
+     *
+     * @param LikeDeleteRequest $request
+     * @return void
+     */
     public function delete(LikeDeleteRequest $request)
     {
+        try {
 
+            $data = $this->likeService->deleteLike($request->user_id, $request->post_id);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

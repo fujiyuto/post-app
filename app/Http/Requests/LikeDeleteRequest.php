@@ -11,7 +11,7 @@ class LikeDeleteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class LikeDeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'post_id' => 'required|numeric',
+            'user_id' => 'required|numeric'
         ];
     }
 
