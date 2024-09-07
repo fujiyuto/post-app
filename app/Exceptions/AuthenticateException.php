@@ -3,11 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-class DataOperationException extends Exception
+class AuthenticateException extends Exception
 {
     public function report(): void
     {
@@ -18,8 +18,8 @@ class DataOperationException extends Exception
     {
         return response()->json([
             'data' => [
-                'error' => 'エラーが発生しました。'
+                'error' => 'ログインに失敗しました'
             ]
-        ], 500);
+        ], 401);
     }
 }
