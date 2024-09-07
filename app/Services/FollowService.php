@@ -16,7 +16,7 @@ class FollowService {
 
         // ユーザーデータの格納
         $response_data['user'] = [
-            'user_name' => $user->user_name,
+            'name' => $user->user_name,
             'gender'    => $user->gender
         ];
 
@@ -54,6 +54,7 @@ class FollowService {
         // フォローユーザー
         foreach ($follow_id_list as $id) {
             $response_data['follows'][] = [
+                'user_id'      => $id,
                 'user_name'    => $follow_users_dict[$id],
                 'follower_num' => count($followers_dict[$id]),
                 'post_num'     => $follows_count_post_dict[$id],
@@ -72,8 +73,8 @@ class FollowService {
 
         // ユーザーデータの格納
         $response_data['user'] = [
-            'user_name' => $user->user_name,
-            'gender'    => $user->gender
+            'name'   => $user->user_name,
+            'gender' => $user->gender
         ];
 
         // 取得したいユーザーのIDとfollows.follower_idでfollowersとusersを内部結合
@@ -113,9 +114,11 @@ class FollowService {
         // フォロワー
         foreach ($follower_id_list as $follower_id) {
             $response_data['followers'][] = [
+                'user_id'      => $follower_id,
                 'user_name'    => $follower_users_dict[$follower_id],
                 'follower_num' => count($followers_dict[$follower_id]),
-                'post_num'     => $followers_count_post_dict[$follower_id]
+                'post_num'     => $followers_count_post_dict[$follower_id],
+                'is_follow'    => in_array(Auth::id(), $followers_dict[$follower_id])
             ];
         }
 
