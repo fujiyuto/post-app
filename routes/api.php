@@ -58,17 +58,21 @@ Route::controller(PostController::class)->group(function () {
 
 Route::controller(LikeController::class)->group(function () {
 
-    // いいねした投稿取得
-    Route::get('/posts/{user}/likes', 'index_posts')->where('user', '[0-9]+')->name('likes.index_posts');
+    Route::middleware('customAuth')->group(function () {
 
-    // いいねしたユーザー取得
-    Route::get('/users/{post}/likes', 'index_users')->where('post', '[0-9]+')->name('likes.index_users');
+        // いいねした投稿取得
+        Route::get('/users/likes/posts/{user}', 'index_posts')->where('user', '[0-9]+')->name('likes.index_posts');
 
-    // いいね作成
-    Route::post('/posts/likes', 'create')->name('likes.create');
+        // いいねしたユーザー取得
+        Route::get('/posts/likes/users/{post}', 'index_users')->where('post', '[0-9]+')->name('likes.index_users');
 
-    // いいね削除
-    Route::delete('/posts/likes', 'delete')->name('likes.delete');
+        // いいね作成
+        Route::post('/posts/likes', 'create')->name('likes.create');
+
+        // いいね削除
+        Route::delete('/posts/likes', 'delete')->name('likes.delete');
+
+    });
 });
 
 Route::controller(RestaurantController::class)->group(function () {

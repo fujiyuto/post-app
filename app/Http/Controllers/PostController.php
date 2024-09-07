@@ -22,7 +22,7 @@ class PostController extends Controller
         $this->postService = $postService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
 
