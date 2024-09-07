@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\DataOperationException;
 use App\Exceptions\UnauthorizationException;
+use App\Exceptions\AuthenticateException;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
 
@@ -154,7 +155,7 @@ class UserService
 
         if (! Auth::attempt($credentials)) {
             // TODO
-            // 認証エラー
+            throw new AuthenticateException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
