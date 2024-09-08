@@ -18,28 +18,68 @@ class RestaurantController extends Controller
         $this->restaurantService = $restaurantService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
+        try {
 
+            $data = $this->restaurantService->getRestaurants($request->genre_cd);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function show(Restaurant $restaurant)
     {
+        try {
 
+            $data = $this->restaurantService->getRestaurant($restaurant);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function create(RestaurantCreateRequest $request)
     {
+        try {
 
+            $data = $this->restaurantService->createRestaurant($request->restaurant_name, $request->zip_cd, $request->address, $request->email, $request->tel_no, $request->price_min, $request->price_max);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function edit(RestaurantEditRequest $request, Restaurant $restaurant)
     {
+        try {
 
+            $data = $this->restaurantService->updateRestaurant($restaurant, $request->restaurant_name, $request->zip_cd, $request->address, $request->email, $request->tel_no, $request->price_min, $request->price_max);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     public function delete(RestaurantDeleteRequest $request, Restaurant $restaurant)
     {
+        try {
 
+            $data = $this->restaurantService->deleteRestaurant($restaurant);
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('tel_no')->comment('電話番号');
             $table->unsignedInteger('price_min')->nullable()->comment('価格（最小）');
             $table->unsignedInteger('price_max')->nullable()->comment('価格（最大）');
+            $table->integer('post_num')->default(0)->comment('投稿数');
+            $table->float('point_avg')->default(0)->comment('平均点数');
             $table->timestamps();
         });
     }

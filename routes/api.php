@@ -83,14 +83,19 @@ Route::controller(RestaurantController::class)->group(function () {
     // 店詳細取得
     Route::get('/restaurants/{restaurant}', 'show')->where('restaurant', '[0-9]+')->name('restaurants.show');
 
-    // 店作成
-    Route::post('/restaurants', 'create')->name('restaurants.create');
+    Route::middleware('customAuth')->group(function () {
 
-    // 店編集
-    Route::patch('/restaurants', 'edit')->name('restaurants.edit');
+        // 店作成
+        Route::post('/restaurants', 'create')->name('restaurants.create');
 
-    // 店削除
-    Route::delete('/restaurants', 'delete')->where('restaurant', '[0-9]+')->name('restaurants.delete');
+        // 店編集
+        Route::patch('/restaurants/{restaurant}', 'edit')->where('restaurant', '[0-9]+')->name('restaurants.edit');
+
+        // 店削除
+        Route::delete('/restaurants/{restaurant}', 'delete')->where('restaurant', '[0-9]+')->name('restaurants.delete');
+
+    });
+
 });
 
 Route::controller(UserStoreRestaurantController::class)->group(function () {
