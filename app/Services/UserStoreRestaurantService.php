@@ -7,6 +7,7 @@ use App\Exceptions\UnauthorizationException;
 use App\Models\User;
 use App\Models\UserStoreRestaurant;
 use App\Models\RestaurantGenre;
+use App\Models\Restaurant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 
@@ -18,11 +19,10 @@ class UserStoreRestaurantService {
         $restaurant_id_list = UserStoreRestaurant::where('user_id', $user->id)->pluck('restaurant_id');
 
         // 店ジャンルと店テーブルを内部結合し、結合したテーブルから取得した店IDの配列に店IDが存在するデータを取得
-        $restaurants = RestaurantGenre::selectRaw('restaurants.id as restaurant_id, restaurant_name, address, price_min, price_max, post_num, point_avg, restaurants.updated_at')
-        ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
-        ->whereIn('restaurant_id', $restaurant_id_list)
-        ->orderBy('restaurants.updated_at', 'desc')
-        ->get();
+        $restaurants = Restaurant::selectRaw('id, restaurant_name, address, price_min, price_max, post_num, point_avg, updated_at')
+                                    ->whereIn('id', $restaurant_id_list)
+                                    ->orderBy('updated_at', 'desc')
+                                    ->get();
 
         // 店ジャンルとジャンルテーブルを内部結合し、結合したテーブルから取得した店IDの配列に店IDが存在するデータを取得
         $genres = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.unique_cd, genres.genre_name')
@@ -54,14 +54,14 @@ class UserStoreRestaurantService {
             ];
         }
 
-        // レスポンスデータを整形
+        //レスポンスデータを整形
         $response_data = [];
         foreach ($restaurants as $restaurant) {
             $update_datetime = new Carbon($restaurant->updated_at);
             $update_date     = $update_datetime->format('Y-m-d');
             $response_data[] = [
                 'restaurant' => [
-                    'id'         => $restaurant->restaurant_id,
+                    'id'         => $restaurant->id,
                     'name'       => $restaurant->restaurant_name,
                     'address'    => $restaurant->address,
                     'price_min'  => $restaurant->price_min,
@@ -70,7 +70,7 @@ class UserStoreRestaurantService {
                     'point_avg'  => $restaurant->point_avg,
                     'updated_at' => $update_date,
                 ],
-                'genres' => $restaurant_genre_dict[$restaurant->restaurant_id]
+                'genres' => array_key_exists($restaurant->id, $restaurant_genre_dict) ?$restaurant_genre_dict[$restaurant->id] : []
             ];
         }
 
