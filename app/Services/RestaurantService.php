@@ -21,25 +21,28 @@ class RestaurantService {
             }
 
             $restaurants = RestaurantGenre::selectRaw('restaurants.id as restaurant_id, restaurant_name, address, price_min, price_max, genre_name, post_num, point_avg, restaurants.updated_at')
-            ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
-            ->join('genres', 'genres.id', '=', 'restaurant_genres.genre_id')
-            ->where('genres.id', $genre->id)
-            ->orderBy('restaurants.updated_at', 'desc')
-            ->get();
+                                            ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
+                                            ->join('genres', 'genres.id', '=', 'restaurant_genres.genre_id')
+                                            ->where('genres.id', $genre->id)
+                                            ->orderBy('restaurants.updated_at', 'desc')
+                                            ->get();
         } else {
-            $restaurants = RestaurantGenre::selectRaw('restaurants.id as restaurant_id, restaurant_name, address, price_min, price_max,  post_num, point_avg, restaurants.updated_at')
-            ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
-            ->orderBy('restaurants.updated_at', 'desc')
-            ->get();
+
+            $restaurants = Restaurant::selectRaw('id as restaurant_id, restaurant_name, address, price_min, price_max, post_num, point_avg, updated_at')
+                                        ->orderBy('restaurants.updated_at', 'desc')
+                                        ->get();
         }
 
-        $genres = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.genre_name')
-        ->join('genres', 'restaurant_genres.genre_id', '=', 'genres.id')
-        ->get();
+        $genres = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.unique_cd, genres.genre_name')
+                                    ->join('genres', 'restaurant_genres.genre_id', '=', 'genres.id')
+                                    ->get();
 
         $restaurant_genre_dict = [];
         foreach ($genres as $genre) {
-            $restaurant_genre_dict[$genre->restaurant_id][] = $genre->genre_name;
+            $restaurant_genre_dict[$genre->restaurant_id][] = [
+                'unique_cd' => $genre->unique_cd,
+                'name'      => $genre->genre_name
+            ];
         }
 
         $response_data = [];
@@ -57,7 +60,7 @@ class RestaurantService {
                     'point_avg'  => $restaurant->point_avg,
                     'updated_at' => $update_date,
                 ],
-                'genres' => $restaurant_genre_dict[$restaurant->restaurant_id]
+                'genres' => array_key_exists($restaurant->restaurant_id, $restaurant_genre_dict) ?$restaurant_genre_dict[$restaurant->restaurant_id] : []
             ];
         }
 
