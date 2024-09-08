@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('genres', function (Blueprint $table) {
             $table->id();
-            $table->string('unique_cd', 4)->comment('ユニークコード');
-            $table->string('name')->comment('名前');
+            $table->string('unique_cd', 6)->comment('ユニークコード');
+            $table->string('genre_name')->comment('名前');
             $table->timestamps();
         });
     }

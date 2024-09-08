@@ -7,6 +7,8 @@ use App\Models\Restaurant;
 use App\Models\Post;
 use App\Models\Follow;
 use App\Models\Like;
+use App\Models\Genre;
+use App\Models\RestaurantGenre;
 use Database\Factories\UserFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -59,6 +61,14 @@ class DatabaseSeeder extends Seeder
                     'post_id' => $post->id
                 ]);
             }
+        }
+        // ジャンル作成
+        $genres = [];
+        for ($i = 1; $i <= 10; $i++) {
+            $genres[] = Genre::create([
+                'unique_cd' => str_pad((string)$i, 4, 0, STR_PAD_LEFT),
+                'genre_name' => 'テストジャンル'.$i
+            ]);
         }
 
         // User::factory()->create([
