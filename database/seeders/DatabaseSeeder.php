@@ -35,11 +35,14 @@ class DatabaseSeeder extends Seeder
         $posts = [];
         foreach ($users as $user) {
             foreach ($restaurants as $restaurant) {
-                $posts[] = Post::factory()->create([
+                $post = Post::factory()->create([
                     'user_id'       => $user->id,
                     'restaurant_id' => $restaurant->id
                 ]);
-
+                $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $post->points) / ($restaurant->post_num + 1), 1);
+                $restaurant->post_num++;
+                $restaurant->save();
+                $posts[] = $post;
             }
         }
         // フォロー作成
