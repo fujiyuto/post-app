@@ -172,7 +172,18 @@ class PostService
         ];
 
         if ( !Post::create($insert_data) ) {
-            throw new DataOperationException('投稿作成エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        // 店の平均点を再計算
+        $restaurant = Restaurant::where('id', $restaurant_id)->first();
+        if ( !$restaurant ) {
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+        $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $points) / ($restaurant->post_num + 1), 1);
+        $restaurant->post_num++;
+        if ( !$restaurant->save() ) {
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
@@ -198,8 +209,11 @@ class PostService
         // ユーザーチェック
         $check = Gate::inspect('update', $post);
         if ( $check->denied() ) {
-            throw new UnauthorizationException('不正な投稿編集');
+            throw new UnauthorizationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
+
+        // 変更前の点数
+        $before_points = $post->points;
 
         $post->title          = $title;
         $post->content        = $content;
@@ -213,8 +227,30 @@ class PostService
         $post->image_url3     = $image_url3;
 
         if ( !$post->save() ) {
-            throw new DataOperationException('投稿更新エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
+
+        // 点数に変更があった場合
+        if ( $before_points != $points ) {
+
+            $restaurant = Restaurant::where('id', $post->restaurant_id)->first();
+            if ( !$restaurant ) {
+                throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+            }
+
+            // 変更点数の差分
+            $diff_point = $points - $before_points;
+
+            // 平均点数の再計算
+            $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $diff_point) / $restaurant->post_num, 1);
+
+            // セーブ
+            if ( !$restaurant->save() ) {
+                throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+            }
+
+        }
+
 
         return [
             'data' => [
@@ -228,11 +264,27 @@ class PostService
         // ユーザーチェック
         $check = Gate::inspect('delete', $post);
         if ( $check->denied() ) {
-            throw new UnauthorizationException('不正な投稿削除');
+            throw new UnauthorizationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
+        // 削除する投稿の店ID、点数、投稿数取得
+        $restaurant_id = $post->restaurant_id;
+        $delete_point  = $post->points;
+
+
         if ( !$post->delete() ) {
-            throw new DataOperationException('投稿削除エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        // 店の投稿数、平均点数を更新
+        $restaurant = Restaurant::where('id', $restaurant_id)->first();
+        if ( !$restaurant ) {
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+        $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) - $delete_point) / ($restaurant->post_num - 1), 1);
+        $restaurant->post_num--;
+        if ( !$restaurant->save() ) {
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
