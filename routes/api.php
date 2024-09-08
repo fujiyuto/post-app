@@ -26,12 +26,16 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/login', 'login')->name('login');
 
     Route::middleware('customAuth')->group(function () {
+
         // ユーザー編集
         Route::patch('/users/{user}', 'edit')->where('user', '[0-9]+')->name('users.edit');
+
         // 退会
         Route::delete('/users/{user}', 'delete')->where('user', '[0-9]+')->name('users.delete');
+
         // ログアウト
         Route::post('/logout', 'logout')->name('logout');
+
     });
 });
 
@@ -47,12 +51,16 @@ Route::controller(PostController::class)->group(function () {
     Route::get('/posts/user/{user}', 'index_user')->where('user', '[0-9]+')->name('posts.inder_user');
 
     Route::middleware('customAuth')->group(function () {
+
         // 投稿作成
         Route::post('/posts', 'create')->name('posts.create');
+
         // 投稿編集
         Route::patch('/posts/{post}', 'edit')->where('post', '[0-9]+')->name('posts.edit');
+
         // 投稿削除
         Route::delete('/posts/{post}', 'delete')->where('post', '[0-9]+')->name('posts.delete');
+
     });
 });
 
@@ -99,12 +107,19 @@ Route::controller(RestaurantController::class)->group(function () {
 });
 
 Route::controller(UserStoreRestaurantController::class)->group(function () {
+
     // ユーザー保存店一覧取得
-    Route::get('/users/store/restaurants', 'index')->name('user_restaurant_store.index');
-    // ユーザー保存店登録
-    Route::post('/users/store/restaurants', 'create')->name('user_restaurant_store.create');
-    // ユーザー保存店削除
-    Route::post('/users/store/restaurants', 'delete')->name('user_restaurant_store.delete');
+    Route::get('/users/{user}/store/restaurants', 'index')->where('user', '[0-9]+')->name('user_restaurant_store.index');
+
+    Route::middleware('customAuth')->group(function () {
+
+        // ユーザー保存店登録
+        Route::post('/users/store/restaurants', 'create')->name('user_restaurant_store.create');
+
+        // ユーザー保存店削除
+        Route::delete('/users/store/restaurants', 'delete')->name('user_restaurant_store.delete');
+
+    });
 });
 
 Route::controller(FollowController::class)->group(function () {
