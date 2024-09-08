@@ -24,4 +24,9 @@ class Restaurant extends Model
     {
         return $this->hasMany(Post::class);
     }
+
+    public function user_store_restaurants(): HasMany
+    {
+        return $this->hasMany(UserStoreRestaurant::class);
+    }
 }
