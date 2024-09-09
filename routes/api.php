@@ -36,6 +36,15 @@ Route::controller(UserController::class)->group(function () {
         // ログアウト
         Route::post('/logout', 'logout')->name('logout');
 
+        // メールアドレス変更リンク送信
+        Route::get('/email/edit/link', 'emailLink')->name('users.emailLink');
+
+        // メールアドレス変更トークンチェック
+        Route::get('/email/token', 'checkEmailToken')->name('users.checkEmailToken');
+
+        // メールアドレス変更
+        Route::patch('/email/edit', 'editEmail')->name('users.editEmail');
+
     });
 });
 

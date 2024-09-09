@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EditEmailRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserCreateRequest;
@@ -11,6 +12,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\LogoutRequest;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -100,6 +102,45 @@ class UserController extends Controller
         try {
 
             $data = $this->userService->logoutUser();
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function emailLink()
+    {
+        try {
+
+            $data = $this->userService->sendEditEmail(Auth::user());
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function checkEmailToken(Request $request)
+    {
+        try {
+
+            $data = $this->userService->checkToken($request->token, Auth::id());
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function editEmail(EditEmailRequest $request)
+    {
+        try {
+
+            $data = $this->userService->updateEmail($request->email, Auth::user());
 
             return $this->responseJson($data);
 
