@@ -5,13 +5,20 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Follow;
 use App\Models\Post;
+use App\Models\EmailToken;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Exceptions\DataOperationException;
 use App\Exceptions\UnauthorizationException;
 use App\Exceptions\AuthenticateException;
+use App\Exceptions\DataNotFoundException;
+use App\Exceptions\SendEmailException;
+use App\Mail\EditEmailAddressMail;
 use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Symfony\Component\Mailer\Messenger\SendEmailMessage;
 
 class UserService
 {
@@ -91,8 +98,7 @@ class UserService
         ];
 
         if (! User::create($insert_data)) {
-            // TODO
-            throw new DataOperationException('ユーザー登録エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
@@ -110,14 +116,14 @@ class UserService
         // ユーザーチェック
         $check = Gate::inspect('update', $user);
         if ($check->denied()) {
-            throw new UnauthorizationException('不正なユーザー編集');
+            throw new UnauthorizationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         $user->user_name = $user_name;
         $user->gender    = $gender;
 
         if (!$user->save()) {
-            throw new DataOperationException('ユーザー編集エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
@@ -132,11 +138,11 @@ class UserService
         // ユーザーチェック
         $check = Gate::inspect('delete', $user);
         if ($check->denied()) {
-            throw new UnauthorizationException('不正なユーザー削除');
+            throw new UnauthorizationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         if (!$user->delete()) {
-            throw new DataOperationException('ユーザー削除エラー');
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         return [
@@ -168,6 +174,94 @@ class UserService
     public function logoutUser()
     {
         Auth::logout();
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
+    }
+
+    public function sendEditEmail(User $user)
+    {
+        // 有効なトークンを無効
+        EmailToken::where([
+            'user_id' => $user->id,
+            'status'  => EmailToken::EMAIL_TOKEN_VALID
+        ])->update(['status'  => EmailToken::EMAIL_TOKEN_INVALID]);
+
+        // 新たなトークンを発行
+        $token = Str::random(60);
+        $insert_data = [
+            'user_id' => $user->id,
+            'token'   => $token
+        ];
+        if ( !EmailToken::create($insert_data) ){
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        // TODO
+        // メールに記載するリセットリンク
+        $email_reset_link = "http://localhost:8573/api/email/token?token={$token}";
+
+        $mail_content = [
+            'user_name'        => $user->user_name,
+            'email_reset_link' => $email_reset_link
+        ];
+
+        try {
+            Mail::to($user->email)->send(new EditEmailAddressMail($mail_content));
+        } catch (\Exception $e) {
+            throw new SendEmailException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
+    }
+
+    public function checkToken(string $token, int $user_id)
+    {
+        $email_token = EmailToken::where([
+                                        'user_id' => $user_id,
+                                        'token'   => $token,
+                                        'status'  => EmailToken::EMAIL_TOKEN_VALID
+                                    ])
+                                    ->first();
+        if ( !$email_token ) {
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        $now = Carbon::now();
+        $created_at = new Carbon($email_token->created_at);
+        if ( $created_at->diffInMinutes($now) > env('MAIL_UPDATE_EXPIRE_TIME') ) {
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
+    }
+
+    public function updateEmail(string $new_email, User $user)
+    {
+        $user->email = $new_email;
+
+        if ( !$user->save() ) {
+            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        // メールアドレス変更を行なったユーザーのトークンを無効
+        EmailToken::where([
+                        'user_id' => $user->id,
+                        'status'  => EmailToken::EMAIL_TOKEN_VALID
+                    ])
+                    ->update(['status'  => EmailToken::EMAIL_TOKEN_INVALID]);
+
 
         return [
             'data' => [
