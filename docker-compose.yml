@@ -103,6 +103,7 @@ services:
 networks:
     sail:
         driver: bridge
+        name: post-app
 volumes:
     sail-mysql:
         driver: local
