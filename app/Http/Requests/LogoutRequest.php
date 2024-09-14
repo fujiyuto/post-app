@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Exceptions\FormRequestException;
+use Illuminate\Contracts\Validation\Validator;
 
 class LogoutRequest extends FormRequest
 {
@@ -30,5 +32,10 @@ class LogoutRequest extends FormRequest
     {
         // TODO
         return [];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new FormRequestException($validator->errors()->all());
     }
 }

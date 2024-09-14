@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Exceptions\FormRequestException;
+use Illuminate\Contracts\Validation\Validator;
 
 class FollowDeleteRequest extends FormRequest
 {
@@ -22,7 +24,7 @@ class FollowDeleteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
+
         ];
     }
 
@@ -30,5 +32,10 @@ class FollowDeleteRequest extends FormRequest
     {
         // TODO
         return [];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new FormRequestException($validator->errors()->all());
     }
 }

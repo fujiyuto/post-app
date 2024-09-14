@@ -10,6 +10,7 @@ use App\Http\Requests\UserEditRequest;
 use App\Http\Requests\UserDeleteRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\LogoutRequest;
+use App\Http\Requests\ResetPasswordRequest;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -123,11 +124,11 @@ class UserController extends Controller
         }
     }
 
-    public function checkEmailToken(Request $request)
+    public function editEmail(EditEmailRequest $request)
     {
         try {
 
-            $data = $this->userService->checkToken($request->token, Auth::id());
+            $data = $this->userService->updateEmail($request->token, $request->new_email, Auth::user());
 
             return $this->responseJson($data);
 
@@ -136,11 +137,24 @@ class UserController extends Controller
         }
     }
 
-    public function editEmail(EditEmailRequest $request)
+    public function pwdLink()
     {
         try {
 
-            $data = $this->userService->updateEmail($request->email, Auth::user());
+            $data = $this->userService->sendResetPwd(Auth::user());
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function resetPwd(ResetPasswordRequest $request)
+    {
+        try {
+
+            $data = $this->userService->resetPwd($request->token, $request->new_password, Auth::user());
 
             return $this->responseJson($data);
 
