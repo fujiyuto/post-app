@@ -3,13 +3,12 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class EditEmailAddressMail extends Mailable
+class ResetPasswordMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -29,7 +28,7 @@ class EditEmailAddressMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "【食べログみたいなApp】メールアドレス変更",
+            subject: "【食べログみたいなApp】パスワードリセット",
         );
     }
 
@@ -39,7 +38,7 @@ class EditEmailAddressMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.edit-email',
+            view: 'mail.reset-pwd',
             with: $this->mail_content
         );
     }

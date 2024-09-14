@@ -39,11 +39,14 @@ Route::controller(UserController::class)->group(function () {
         // メールアドレス変更リンク送信
         Route::get('/email/edit/link', 'emailLink')->name('users.emailLink');
 
-        // メールアドレス変更トークンチェック
-        Route::get('/email/token', 'checkEmailToken')->name('users.checkEmailToken');
-
         // メールアドレス変更
         Route::patch('/email/edit', 'editEmail')->name('users.editEmail');
+
+        // パスワードリセットリンク送信
+        Route::get('/pwd/reset/link', 'pwdLink')->name('users.pwdLink');
+
+        // パスワード変更
+        Route::patch('/pwd/reset', 'resetPwd')->name('users.resetPwd');
 
     });
 });

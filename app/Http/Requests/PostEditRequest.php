@@ -2,8 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Exceptions\FormRequestException;
+use Illuminate\Contracts\Validation\Validator;
 
 use Illuminate\Support\Facades\Log;
 
@@ -61,6 +62,6 @@ class PostEditRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        
+        throw new FormRequestException($validator->errors()->all());
     }
 }
