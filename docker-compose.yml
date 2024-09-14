@@ -1,11 +1,11 @@
 services:
     laravel.test:
         build:
-            context: ./vendor/laravel/post-app/runtimes/8.3
+            context: ./vendor/laravel/sail/runtimes/8.3
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: post-app-8.3/app
+        image: sail-8.3/app
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -13,9 +13,9 @@ services:
             - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
         environment:
             WWWUSER: '${WWWUSER}'
-            LARAVEL_post-app: 1
-            XDEBUG_MODE: '${post-app_XDEBUG_MODE:-off}'
-            XDEBUG_CONFIG: '${post-app_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+            LARAVEL_sail: 1
+            XDEBUG_MODE: '${sail_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${sail_XDEBUG_CONFIG:-client_host=host.docker.internal}'
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
             MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
             MYSQL_DATABASE: '${DB_DATABASE}'
