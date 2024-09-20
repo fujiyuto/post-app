@@ -171,18 +171,18 @@ class PostService
             'image_url3'     => $image_url3
         ];
 
-        if (!Post::create($insert_data)) {
+        if ( !Post::create($insert_data) ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         // 店の平均点を再計算
         $restaurant = Restaurant::where('id', $restaurant_id)->first();
-        if (!$restaurant) {
+        if ( !$restaurant ) {
             throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
         $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $points) / ($restaurant->post_num + 1), 1);
         $restaurant->post_num++;
-        if (!$restaurant->save()) {
+        if ( !$restaurant->save() ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
@@ -226,7 +226,7 @@ class PostService
         $post->image_url2     = $image_url2;
         $post->image_url3     = $image_url3;
 
-        if (!$post->save()) {
+        if ( !$post->save() ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 

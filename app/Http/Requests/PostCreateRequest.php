@@ -60,8 +60,6 @@ class PostCreateRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        return response()->json([
-            'error' => 'エラーです'
-        ], 400);
+        throw new FormRequestException($validator->errors()->all());
     }
 }

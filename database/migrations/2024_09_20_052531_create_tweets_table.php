@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('tweets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bulletin_board_id')->constrained()->onDelete('cascade')->comment('掲示板ID');
+            $table->foreignId('restaurant_id')->constrained()->onDelete('cascade')->comment('店ID');
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('会員ID');
             $table->string('message')->comment('メッセージ');
             $table->timestamps();
