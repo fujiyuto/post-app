@@ -262,7 +262,7 @@ class PostService
     {
         // ユーザーチェック
         $check = Gate::inspect('delete', $post);
-        if ($check->denied()) {
+        if ( $check->denied() ) {
             throw new UnauthorizationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
@@ -271,18 +271,18 @@ class PostService
         $delete_point  = $post->points;
 
 
-        if (!$post->delete()) {
+        if ( !$post->delete() ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         // 店の投稿数、平均点数を更新
         $restaurant = Restaurant::where('id', $restaurant_id)->first();
-        if (!$restaurant) {
+        if ( !$restaurant ) {
             throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
         $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) - $delete_point) / ($restaurant->post_num - 1), 1);
         $restaurant->post_num--;
-        if (!$restaurant->save()) {
+        if ( !$restaurant->save() ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 

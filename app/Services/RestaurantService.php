@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Models\Genre;
 use App\Models\RestaurantGenre;
 use Carbon\Carbon;
+use App\Models\Tweet;
 
 class RestaurantService {
 
@@ -83,6 +84,7 @@ class RestaurantService {
 
         // TODO
         // Tweetの一覧を取得する処理を追加する
+
 
         $response_data = [
             'restaurant' => [

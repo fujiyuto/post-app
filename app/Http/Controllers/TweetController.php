@@ -20,6 +20,19 @@ class TweetController extends Controller
         $this->tweetService = $tweetService;
     }
 
+    public function index(Request $request, Restaurant $restaurant)
+    {
+        try {
+
+            $data = $this->tweetService->getTweets($restaurant, $request->input('keyword', ''), $request->input('perPage', 2));
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     public function create(TweetCreateRequest $request)
     {
         try {

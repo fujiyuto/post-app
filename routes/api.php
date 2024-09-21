@@ -6,7 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserStoreRestaurantController;
-use App\Models\UserStoreRestaurant;
+use App\Http\Controllers\TweetController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -138,15 +138,30 @@ Route::controller(FollowController::class)->group(function () {
 
     Route::middleware('customAuth')->group(function () {
         // フォローユーザー取得
-        Route::get('/follows/{user}', 'index_follow')->name('follows.index_follow');
+        Route::get('/follows/{user}', 'index_follow')->where('user', '[0-9]+')->name('follows.index_follow');
 
         // フォロワーユーザー取得
-        Route::get('/followers/{user}', 'index_follower')->name('follows.index_follower');
+        Route::get('/followers/{user}', 'index_follower')->where('user', '[0-9]+')->name('follows.index_follower');
 
         // ユーザーフォロー
         Route::post('/follows', 'create')->name('follows.create');
 
         // ユーザーアンフォロー
-        Route::delete('/follows/{user}', 'delete')->name('follows.delete');
+        Route::delete('/follows/{user}', 'delete')->where('user', '[0-9]+')->name('follows.delete');
     });
+});
+
+Route::controller(TweetController::class)->group(function () {
+
+    Route::middleware('customAuth')->group(function () {
+        //ツイート取得
+        Route::get('/tweets/{restaurant}', 'index')->name('tweets.index');
+        // ツイート作成
+        Route::post('/tweets', 'create')->name('tweets.create');
+        // ツイート編集
+        Route::patch('/tweets/{tweet}', 'edit')->where('tweet', '[0-9]+')->name('tweets.edit');
+        // ツイート削除
+        Route::delete('/tweets/{tweet}', 'delete')->where('tweet', '[0-9]+')->name('tweets.delete');
+    });
+
 });

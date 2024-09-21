@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Tweet extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'restaurant_id',
+        'user_id',
+        'message'
+    ];
 }
