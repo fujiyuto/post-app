@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('genres', function (Blueprint $table) {
             $table->id();
-            $table->string('unique_cd', 6)->comment('ユニークコード');
+            $table->string('unique_name')->comment('ユニーク名');
             $table->string('genre_name')->comment('名前');
             $table->timestamps();
         });

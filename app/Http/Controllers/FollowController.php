@@ -18,11 +18,11 @@ class FollowController extends Controller
         $this->followService = $followService;
     }
 
-    public function index_follow(User $user)
+    public function index_follow(Request $request, User $user)
     {
         try {
 
-            $data = $this->followService->getFollowUsers($user);
+            $data = $this->followService->getFollowUsers($user, $request->keyword);
 
             return $this->responseJson($data);
 
@@ -31,11 +31,11 @@ class FollowController extends Controller
         }
     }
 
-    public function index_follower(User $user)
+    public function index_follower(Request $request, User $user)
     {
         try {
 
-            $data = $this->followService->getFollowers($user);
+            $data = $this->followService->getFollowers($user, $request->keyword);
 
             return $this->responseJson($data);
 

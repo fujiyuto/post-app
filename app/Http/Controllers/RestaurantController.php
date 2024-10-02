@@ -22,7 +22,7 @@ class RestaurantController extends Controller
     {
         try {
 
-            $data = $this->restaurantService->getRestaurants($request->genre_cd);
+            $data = $this->restaurantService->getRestaurants($request->query('genre_name', ''), $request->query('region', ''), $request->query('keyword', ''));
 
             return $this->responseJson($data);
 
