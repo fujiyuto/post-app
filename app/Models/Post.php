@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Builder;
 
 class Post extends Model
 {
@@ -34,5 +35,23 @@ class Post extends Model
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id'         => $this->id,
+            'title'      => $this->title,
+            'content'    => $this->content,
+            'visited_at' => $this->visited_at,
+            'points'     => $this->points,
+            'price_min'  => $this->price_min,
+            'price_max'  => $this->price_max
+        ];
+    }
+
+    protected function makeAllSearchableUsing(Builder $query)
+    {
+        return $query->with(['user', 'restaurant']);
     }
 }

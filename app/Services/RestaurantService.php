@@ -9,61 +9,66 @@ use App\Models\Genre;
 use App\Models\RestaurantGenre;
 use Carbon\Carbon;
 use App\Models\Tweet;
+use Algolia\AlgoliaSearch\SearchIndex;
 
 class RestaurantService {
 
-    public function getRestaurants(string|null $genre_cd)
+    public function getRestaurants(string $genre_name, string $region, string $keyword)
     {
-        if ( $genre_cd ) {
+        // if ( $genre_cd ) {
 
-            $genre = Genre::where('unique_cd', $genre_cd)->first();
-            if ( !$genre ) {
-                throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
-            }
+        //     $genre = Genre::where('unique_cd', $genre_cd)->first();
+        //     if ( !$genre ) {
+        //         throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        //     }
 
-            $restaurants = RestaurantGenre::selectRaw('restaurants.id as restaurant_id, restaurant_name, address, price_min, price_max, genre_name, post_num, point_avg, restaurants.updated_at')
-                                            ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
-                                            ->join('genres', 'genres.id', '=', 'restaurant_genres.genre_id')
-                                            ->where('genres.id', $genre->id)
-                                            ->orderBy('restaurants.updated_at', 'desc')
-                                            ->get();
-        } else {
+        //     $restaurants = RestaurantGenre::selectRaw('restaurants.id as restaurant_id, restaurant_name, address, price_min, price_max, genre_name, post_num, point_avg, restaurants.updated_at')
+        //                                     ->join('restaurants', 'restaurants.id', '=', 'restaurant_genres.restaurant_id')
+        //                                     ->join('genres', 'genres.id', '=', 'restaurant_genres.genre_id')
+        //                                     ->where('genres.id', $genre->id)
+        //                                     ->orderBy('restaurants.updated_at', 'desc')
+        //                                     ->get();
+        // } else {
 
-            $restaurants = Restaurant::selectRaw('id as restaurant_id, restaurant_name, address, price_min, price_max, post_num, point_avg, updated_at')
-                                        ->orderBy('restaurants.updated_at', 'desc')
-                                        ->get();
-        }
+        //     $restaurants = Restaurant::selectRaw('id as restaurant_id, restaurant_name, address, price_min, price_max, post_num, point_avg, updated_at')
+        //                                 ->orderBy('restaurants.updated_at', 'desc')
+        //                                 ->get();
+        // }
 
-        $genres = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.unique_cd, genres.genre_name')
-                                    ->join('genres', 'restaurant_genres.genre_id', '=', 'genres.id')
-                                    ->get();
+        // $genres = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.unique_cd, genres.genre_name')
+        //                             ->join('genres', 'restaurant_genres.genre_id', '=', 'genres.id')
+        //                             ->get();
 
-        $restaurant_genre_dict = [];
-        foreach ($genres as $genre) {
-            $restaurant_genre_dict[$genre->restaurant_id][] = [
-                'unique_cd' => $genre->unique_cd,
-                'name'      => $genre->genre_name
-            ];
-        }
+        // $restaurant_genre_dict = [];
+        // foreach ($genres as $genre) {
+        //     $restaurant_genre_dict[$genre->restaurant_id][] = [
+        //         'unique_cd' => $genre->unique_cd,
+        //         'name'      => $genre->genre_name
+        //     ];
+        // }
 
-        $response_data = [];
-        foreach ($restaurants as $restaurant) {
-            $update_datetime = new Carbon($restaurant->updated_at);
-            $update_date     = $update_datetime->format('Y-m-d');
-            $response_data[] = [
-                'restaurant' => [
-                    'id'         => $restaurant->restaurant_id,
-                    'name'       => $restaurant->restaurant_name,
-                    'address'    => $restaurant->address,
-                    'price_min'  => $restaurant->price_min,
-                    'price_max'  => $restaurant->price_max,
-                    'post_num'   => $restaurant->post_num,
-                    'point_avg'  => $restaurant->point_avg,
-                    'updated_at' => $update_date,
-                ],
-                'genres' => array_key_exists($restaurant->restaurant_id, $restaurant_genre_dict) ?$restaurant_genre_dict[$restaurant->restaurant_id] : []
-            ];
-        }
+        // $response_data = [];
+        // foreach ($restaurants as $restaurant) {
+        //     $update_datetime = new Carbon($restaurant->updated_at);
+        //     $update_date     = $update_datetime->format('Y-m-d');
+        //     $response_data[] = [
+        //         'restaurant' => [
+        //             'id'         => $restaurant->restaurant_id,
+        //             'name'       => $restaurant->restaurant_name,
+        //             'address'    => $restaurant->address,
+        //             'price_min'  => $restaurant->price_min,
+        //             'price_max'  => $restaurant->price_max,
+        //             'post_num'   => $restaurant->post_num,
+        //             'point_avg'  => $restaurant->point_avg,
+        //             'updated_at' => $update_date,
+        //         ],
+        //         'genres' => array_key_exists($restaurant->restaurant_id, $restaurant_genre_dict) ?$restaurant_genre_dict[$restaurant->restaurant_id] : []
+        //     ];
+        // }
+
+        // print_r($genre_names);
+
+        $response_data = Restaurant::search("{$keyword} {$region} {$genre_name}")->get();
 
         return [
             'data' => [
@@ -81,10 +86,6 @@ class RestaurantService {
 
         $update_datetime = new Carbon($restaurant->updated_at);
         $update_date     = $update_datetime->format('Y-m-d');
-
-        // TODO
-        // Tweetの一覧を取得する処理を追加する
-
 
         $response_data = [
             'restaurant' => [

@@ -24,7 +24,7 @@ class TweetController extends Controller
     {
         try {
 
-            $data = $this->tweetService->getTweets($restaurant, $request->input('keyword', ''), $request->input('perPage', 2));
+            $data = $this->tweetService->getTweets($restaurant, $request->input('keyword'), $request->input('perPage', 2));
 
             return $this->responseJson($data);
 

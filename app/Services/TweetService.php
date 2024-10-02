@@ -11,21 +11,30 @@ use App\Exceptions\UnauthorizationException;
 
 class TweetService
 {
-    public function getTweets(Restaurant $restaurant, string $keyword, int $per_page)
+    public function getTweets(Restaurant $restaurant, string|null $keyword, int $per_page)
     {
-        $tweets_query = Tweet::selectRaw('tweets.id as id, users.user_name, tweets.message')
-                        ->join('users', 'users.id', '=', 'tweets.user_id')
-                        ->where('restaurant_id', $restaurant->id);
+
         if ( $keyword ) {
-            $tweets_query->where('tweets.message', 'LIKE', "%{$keyword}%")
-                         ->orWhere('users.user_name', 'LIKE', "%{$keyword}%");
+            $tweets = Tweet::search($keyword)
+                            ->where('restaurant_id', $restaurant->id)
+                            ->paginate($per_page);
+        } else {
+            $tweets = Tweet::selectRaw('tweets.id as id, users.user_name, tweets.message')
+                        ->join('users', 'users.id', '=', 'tweets.user_id')
+                        ->where('restaurant_id', $restaurant->id)
+                        ->orderBy('tweets.id', 'desc')
+                        ->paginate($per_page);
         }
-        $tweets = $tweets_query->orderBy('tweets.id', 'desc')
-                               ->simplePaginate($per_page);
+
+        $response_data = [
+            'current_page' => $tweets->currentPage(),
+            'per_page'     => $tweets->perPage(),
+            'last_page'    => $tweets->lastPage(),
+            'tweets'       => $tweets->items()
+        ];
+
         return [
-            'data' => [
-                'tweets' => $tweets
-            ]
+            'data' => $response_data
         ];
     }
 
