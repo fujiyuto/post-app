@@ -12,6 +12,7 @@ use App\Models\RestaurantGenre;
 use Database\Factories\UserFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class DatabaseSeeder extends Seeder
 {
@@ -39,6 +40,10 @@ class DatabaseSeeder extends Seeder
                     'user_id'       => $user->id,
                     'restaurant_id' => $restaurant->id
                 ]);
+
+                $user->post_num++;
+                $user->save();
+
                 $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $post->points) / ($restaurant->post_num + 1), 1);
                 $restaurant->post_num++;
                 $restaurant->save();
@@ -68,16 +73,18 @@ class DatabaseSeeder extends Seeder
         // ジャンル作成
         $genres = [];
         for ($i = 1; $i <= 10; $i++) {
-            $genres[] = Genre::create([
-                'unique_cd' => str_pad((string)$i, 4, 0, STR_PAD_LEFT),
-                'genre_name' => 'テストジャンル'.$i
+            $genres[] = Genre::factory()->create();
+        }
+
+        // 店とジャンルの関連付け
+        foreach ($restaurants as $restaurant) {
+            RestaurantGenre::create([
+                'restaurant_id' => $restaurant->id,
+                'genre_id' => $genres[rand(0,9)]->id
             ]);
         }
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        
 
     }
 }

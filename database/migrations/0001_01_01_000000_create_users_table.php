@@ -12,12 +12,15 @@ return new class () extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_name')->comment('名前');
+            $table->string('user_name')->comment('ユーザー名');
             $table->string('email')->unique()->comment('メールアドレス');
+            $table->string('tel_no', 13)->comment('電話番号');
+            $table->date('birthday')->comment('誕生日');
             $table->timestamp('email_verified_at')->nullable()->comment('メール認証日時');
             $table->string('password')->comment('パスワード');
             $table->unsignedTinyInteger('gender')->comment('性別（1:男、2:女）');
             $table->unsignedTinyInteger('user_type')->comment('会員タイプ（1:顧客、2:店主）');
+            $table->integer('post_num')->default(0)->comment('投稿数');
             // $table->rememberToken();
             $table->timestamps();
         });

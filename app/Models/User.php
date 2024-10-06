@@ -21,6 +21,8 @@ class User extends Authenticatable
     protected $fillable = [
         'user_name',
         'email',
+        'tel_no',
+        'birthday',
         'password',
         'gender',
         'user_type'
@@ -65,5 +67,17 @@ class User extends Authenticatable
     public function user_store_restaurants(): HasMany
     {
         return $this->hasMany(UserStoreRestaurant::class);
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id'            => $this->id,
+            'user_name'     => $this->user_name,
+            'name_sei'      => $this->name_sei,
+            'name_mei'      => $this->name_mei,
+            'name_sei_kana' => $this->name_sei_kana ?? '',
+            'name_mei_kana' => $this->name_mei_kana ?? '',
+        ];
     }
 }

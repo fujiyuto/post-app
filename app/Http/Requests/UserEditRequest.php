@@ -25,7 +25,9 @@ class UserEditRequest extends FormRequest
     {
         return [
             'user_name' => 'required|string|max:255',
-            'gender'    => 'required|numeric|digits:1'
+            'gender'    => 'required|numeric|digits:1',
+            'tel_no'    => 'required|digits_between:10,11',
+            'birthday'  => 'required|date_format:Y-m-d'
         ];
     }
 

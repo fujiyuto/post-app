@@ -14,6 +14,7 @@ use App\Http\Requests\ResetPasswordRequest;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\EmailConfirmRequest;
 
 class UserController extends Controller
 {
@@ -45,6 +46,8 @@ class UserController extends Controller
                 $request->user_name,
                 $request->email,
                 $request->password,
+                (string)$request->tel_no,
+                $request->birthday,
                 $request->gender,
                 $request->user_type,
             );
@@ -60,7 +63,7 @@ class UserController extends Controller
     {
         try {
 
-            $data = $this->userService->updateUser($user, $request->user_name, $request->gender);
+            $data = $this->userService->updateUser($user, $request->user_name, $request->gender, (string)$request->tel_no, $request->birthday);
 
             return $this->responseJson($data);
 
@@ -86,10 +89,14 @@ class UserController extends Controller
     {
         try {
 
+            Log::debug($request->email);
+            Log::debug($request->password);
+
             $data = $this->userService->loginUser($request->email, $request->password);
 
             // セッション再生成
-            $request->session()->regenerate();
+            // $request->session()->regenerate();
+            session()->regenerate();
 
             return response()->json($data);
 
@@ -115,7 +122,7 @@ class UserController extends Controller
     {
         try {
 
-            $data = $this->userService->sendEditEmail(Auth::user());
+            $data = $this->userService->sendEditEmailLink(Auth::user());
 
             return $this->responseJson($data);
 
@@ -129,6 +136,19 @@ class UserController extends Controller
         try {
 
             $data = $this->userService->updateEmail($request->token, $request->new_email, Auth::user());
+
+            return $this->responseJson($data);
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function emailConfirm(EmailConfirmRequest $request)
+    {
+        try {
+
+            $data = $this->userService->emailConfirm($request->tel_no, $request->birthday);
 
             return $this->responseJson($data);
 
