@@ -14,6 +14,7 @@ use App\Exceptions\UnauthorizationException;
 use App\Exceptions\AuthenticateException;
 use App\Exceptions\DataNotFoundException;
 use App\Exceptions\SendEmailException;
+use App\Mail\ConfirmEmailMail;
 use App\Mail\EditEmailAddressMail;
 use App\Mail\ResetPasswordMail;
 use Illuminate\Support\Facades\Gate;
@@ -88,6 +89,8 @@ class UserService
         string $user_name,
         string $email,
         string $password,
+        string $tel_no,
+        string $birthday,
         int    $gender,
         int    $user_type
     ) {
@@ -95,6 +98,8 @@ class UserService
             'user_name' => $user_name,
             'email'     => $email,
             'password'  => Hash::make($password),
+            'tel_no'    => $tel_no,
+            'birthday'  => $birthday,
             'gender'    => $gender,
             'user_type' => $user_type
         ];
@@ -113,7 +118,9 @@ class UserService
     public function updateUser(
         User   $user,
         string $user_name,
-        int    $gender
+        int    $gender,
+        string $tel_no,
+        string $birthday
     ) {
         // ユーザーチェック
         $check = Gate::inspect('update', $user);
@@ -123,6 +130,8 @@ class UserService
 
         $user->user_name = $user_name;
         $user->gender    = $gender;
+        $user->tel_no    = $tel_no;
+        $user->birthday  = $birthday;
 
         if (!$user->save()) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
@@ -148,9 +157,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -167,9 +174,8 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'id'        => Auth::id(),
+            'user_name' => Auth::user()->user_name
         ];
     }
 
@@ -184,7 +190,7 @@ class UserService
         ];
     }
 
-    public function sendEditEmail(User $user)
+    public function sendEditEmailLink(User|null $user)
     {
         // 有効なトークンを無効
         EmailToken::where([
@@ -205,7 +211,7 @@ class UserService
 
         // TODO
         // メールに記載するリセットリンク
-        $email_reset_link = "http://localhost:8573/api/email/token?token={$token}";
+        $email_reset_link = "http://localhost:3300/users/forget/{$token}";
 
         // リンク有効時間
         $expire_time = $this->getExpireTime(env('MAIL_UPDATE_EXPIRE_TIME', 1440));
@@ -290,6 +296,34 @@ class UserService
 
         try {
             Mail::to($user->email)->send(new ResetPasswordMail($mail_content));
+        } catch (\Exception $e) {
+            throw new SendEmailException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        return [
+            'data' => [
+                'ok' => true
+            ]
+        ];
+    }
+
+    public function emailConfirm(string $tel_no, string $birthday)
+    {
+        $user = User::where([
+                        'tel_no' => $tel_no,
+                        'birthday' => $birthday
+                    ])->first();
+
+        if ( !$user ) {
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+        }
+
+        $mail_content = [
+            'user_name' => $user->user_name
+        ];
+
+        try {
+            Mail::to($user->email)->send(new ConfirmEmailMail($mail_content));
         } catch (\Exception $e) {
             throw new SendEmailException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
