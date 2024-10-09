@@ -25,6 +25,15 @@ Route::controller(UserController::class)->group(function () {
     // ログイン
     Route::post('/login', 'login')->name('login');
 
+    // メールアドレス確認
+    Route::post('/email/confirm', 'emailConfirm')->name('users.emailConfirm');
+
+    // パスワードリセットリンク送信
+    Route::get('/pwd/reset/link', 'pwdLink')->name('users.pwdLink');
+
+    // パスワード変更
+    Route::patch('/pwd/reset', 'resetPwd')->name('users.resetPwd');
+
     Route::middleware('customAuth')->group(function () {
 
         // ユーザー編集
@@ -41,19 +50,12 @@ Route::controller(UserController::class)->group(function () {
 
         // メールアドレス変更
         Route::patch('/email/edit', 'editEmail')->name('users.editEmail');
-
-        // パスワードリセットリンク送信
-        Route::get('/pwd/reset/link', 'pwdLink')->name('users.pwdLink');
-
-        // パスワード変更
-        Route::patch('/pwd/reset', 'resetPwd')->name('users.resetPwd');
-
     });
 });
 
 Route::controller(PostController::class)->group(function () {
 
-    // 投稿一覧取得
+    // 店への投稿一覧取得
     Route::get('/posts', 'index')->name('posts.index');
 
     // 投稿詳細取得

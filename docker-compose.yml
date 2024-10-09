@@ -1,5 +1,5 @@
 services:
-    laravel.test:
+    post-api:
         build:
             context: ./vendor/laravel/sail/runtimes/8.3
             dockerfile: Dockerfile
@@ -26,6 +26,7 @@ services:
             - '.:/var/www/html'
         networks:
             - post-app
+            - local-network
         depends_on:
             - redis
             - meilisearch

@@ -88,10 +88,6 @@ class UserController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-
-            Log::debug($request->email);
-            Log::debug($request->password);
-
             $data = $this->userService->loginUser($request->email, $request->password);
 
             // セッション再生成

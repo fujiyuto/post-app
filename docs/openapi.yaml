@@ -1,0 +1,303 @@
+openapi: 3.0.0
+info:
+  title: Tabelogish API
+  description: 食べログっぽいwebアプリのAPIについての定義
+  termsOfService: http://localhost:8573
+  contact:
+    name: Tabelogishサポート
+    email: support.tabelogish@example.com
+  version: 1.0.0
+servers:
+  - url: http://localhost:8573
+    description: ローカル環境サーバー
+  - url: https://dev.sample.com/v1
+    description: 開発環境サーバー
+  - url: https://staging.sample.com/v1
+    description: ステージング環境サーバー
+  - url: https:://prod.sample.com/v1
+    description: 本番環境サーバー
+paths:
+  /posts/user/{userId}:
+    get:
+      tags:
+        - post
+      summary: ユーザーの投稿を取得する
+      description: Restaurantモデルの配列を返す.
+      parameters: # URLパラメータ
+        - name: userId
+          in: path
+          description: 会員ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Restaurantモデルの配列を返す
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+                example:
+                  - id: 1
+                    title: 感動した
+                    content: 感動した内容
+                    visited_at: 2024-01-01
+                    period_of_time: 1
+                    points: 3.5
+                    price_min: 1000
+                    price_max: 1500
+                    image_url1: https://tabelog1.png
+                    image_url2: https://tabelog2.png
+                    image_url3: https://tabelog3.png
+                  - id: 2
+                    title: 激怒した
+                    content: 激怒した内容
+                    visited_at: 2024-01-01
+                    period_of_time: 2
+                    points: 4.0
+                    price_min: 2000
+                    price_max: 4500
+                    image_url1: https://tabelog1.png
+                    image_url2: https://tabelog2.png
+                    image_url3: https://tabelog3.png
+  /restaurants:
+    get:
+      tags:
+        - restaurant
+      summary: 店の一覧を返す
+      parameters:
+        - in: query
+          name: genre_name
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: region
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: keyword
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: RestaurantモデルとRestaurantに紐づくGenreモデルの配列の配列を返す
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    restaurant:
+                      type: object
+                      items:
+                        $ref: '#/components/schemas/Restaurant'
+                      example:
+                        - id: 1
+                          name: たこ焼きや
+                          address: 東京都近藤市中央区若松町津田1-8-4 コーポ井高101号
+                          email: aaa@example.com
+                          price_min: 1000
+                          price_max: 4000
+                          post_num: 10
+                          point_avg: 3.5
+                          updated_at: 2024-01-01
+                    genres:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - テストジャンル1
+                        - テストジャンル2
+                        - テストジャンル3
+
+
+
+
+
+
+
+
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - user_name
+        - email
+        - tel_no
+        - birthday
+        - password
+        - gender
+        - user_type
+        - post_num
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_name:
+          type: string
+          example: test_user
+        email:
+          type: string
+          example: test@example.com
+        tel_no:
+          type: string
+          example: 08011112222
+        birthday:
+          type: string
+          example: 2024-01-01
+        email_verified_at:
+          type: string
+          example: 2024-01-01 23:59:59
+        password:
+          type: string
+          example: password
+        gender:
+          type: integer
+          example: 1
+        user_type:
+          type: integer
+          example: 1
+        post_num:
+          type: integer
+          example: 10
+        created_at:
+          type: string
+          example: 2024-01-01 23:59:59
+        deleted_at:
+          type: string
+          example: 2024-01-01 23:59:59
+    Restaurant:
+      type: object
+      required:
+        - id
+        - restaurant_name
+        - zip_cd
+        - address
+        - tel_no
+        - post_num
+        - point_avg
+      properties:
+        id:
+          type: integer
+          example: 1
+        restaurant_name:
+          type: string
+          example: たこやきや
+        zip_cd:
+          type: string
+          example: 1234567
+        address:
+          type: string
+          example: 大分県日田市中央1丁目11-1
+        email:
+          type: string
+          example: text@example.com
+        tel_no:
+          type: string
+          example: 056489395039
+        price_min:
+          type: integer
+          example: 1000
+        price_max:
+          type: integer
+          example: 5000
+        post_num:
+          type: integer
+          example: 10
+        point_avg:
+          type: number
+          example: 3.5
+        created_at:
+          type: string
+          example: 2024-01-01 23:59:59
+        deleted_at:
+          type: string
+          example: 2024-01-01 23:59:59
+    Post:
+      type: object
+      required:
+        - id
+        - user_id
+        - restaurant_id
+        - title
+        - content
+        - period_of_time
+        - points
+      properties:
+        id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          example: 1
+        restaurant_id:
+          type: integer
+          example: 1
+        title:
+          type: string
+          example: テストタイトル
+        content:
+          type: string
+          example: テスト内容
+        visited_at:
+          type: string
+          example: 2024-01-01
+        period_of_time:
+          type: integer
+          example: 1
+        points:
+          type: number
+          example: 3.5
+        price_min:
+          type: integer
+          example: 1000
+        price_max:
+          type: integer
+          example: 4000
+        image_url1:
+          type: string
+          example: https://test1_image.png
+        image_url2:
+          type: string
+          example: https://test2_image.png
+        image_url3:
+          type: string
+          example: https://test3_image.png
+        created_at:
+          type: string
+          example: 2024-01-01 23:59:59
+        deleted_at:
+          type: string
+          example: 2024-01-01 23:59:59
+    Genre:
+      type: object
+      required:
+        - id
+        - unique_name
+        - genre_name
+      properties:
+        id:
+          type: integer
+          example: 1
+        unique_name:
+          type: string
+          example: test1
+        genre_name:
+          type: string
+          example: テストジャンル1
+        created_at:
+          type: string
+          example: 2024-01-01 23:59:59
+        deleted_at:
+          type: string
+          example: 2024-01-01 23:59:59
+
