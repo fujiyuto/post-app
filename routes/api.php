@@ -7,6 +7,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserStoreRestaurantController;
 use App\Http\Controllers\TweetController;
+use App\Http\Controllers\GenreController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -166,4 +167,9 @@ Route::controller(TweetController::class)->group(function () {
         Route::delete('/tweets/{tweet}', 'delete')->where('tweet', '[0-9]+')->name('tweets.delete');
     });
 
+});
+
+Route::controller(GenreController::class)->group(function () {
+    // ジャンルリスト取得
+    Route::get('/genres', 'index')->name('genres.index');
 });
