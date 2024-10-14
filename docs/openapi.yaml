@@ -115,7 +115,18 @@ paths:
                         - テストジャンル1
                         - テストジャンル2
                         - テストジャンル3
-
+  /genres:
+    get:
+      tags:
+        - genre
+      summary: 全ジャンルのリストを返す
+      responses:
+        '200':
+          description: unique_nameとgenre_nameのオブジェクトの配列を返す
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetGenresResponse'
 
 
 
@@ -125,6 +136,31 @@ paths:
 
 components:
   schemas:
+    GetGenresResponse:
+      type: object
+      properties:
+        genre_groups:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              group_name:
+                type: string
+              genres:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    unique_name:
+                      description: ジャンルユニーク名
+                      type: string
+                      example: 'genre_unique_test'
+                    genre_name:
+                      description: ジャンル名
+                      type: string
+                      example: ジャンル名
+
+
     User:
       type: object
       required:

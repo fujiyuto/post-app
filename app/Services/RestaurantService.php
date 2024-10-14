@@ -10,10 +10,11 @@ use App\Models\RestaurantGenre;
 use Carbon\Carbon;
 use App\Models\Tweet;
 use Algolia\AlgoliaSearch\SearchIndex;
+use Illuminate\Support\Facades\Log;
 
 class RestaurantService {
 
-    public function getRestaurants(string $genre_name, string $region, string $keyword)
+    public function getRestaurants(string $genre_unique_name, string $region, string $keyword)
     {
         // if ( $genre_cd ) {
 
@@ -68,12 +69,12 @@ class RestaurantService {
 
         // print_r($genre_names);
 
-        $response_data = Restaurant::search("{$keyword} {$region} {$genre_name}")->get();
+        $response_data = Restaurant::search("{$keyword} {$region} {$genre_unique_name}")->get();
+
+        Log::debug($genre_unique_name);
 
         return [
-            'data' => [
-                'restaurants' => $response_data
-            ]
+            'restaurants' => $response_data
         ];
     }
 

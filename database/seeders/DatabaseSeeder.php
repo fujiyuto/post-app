@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Follow;
 use App\Models\Like;
 use App\Models\Genre;
+use App\Models\GenreGroup;
 use App\Models\RestaurantGenre;
 use Database\Factories\UserFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -31,7 +32,7 @@ class DatabaseSeeder extends Seeder
         // ユーザー作成
         $users = User::factory()->count(10)->create();
         // 店作成
-        $restaurants = Restaurant::factory()->count(5)->create();
+        $restaurants = Restaurant::factory()->count(50)->create();
         // 投稿作成
         $posts = [];
         foreach ($users as $user) {
@@ -70,21 +71,22 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+        // ジャンルグループ作成
+        $genre_groups = GenreGroup::factory()->count(5)->create();
         // ジャンル作成
         $genres = [];
-        for ($i = 1; $i <= 10; $i++) {
-            $genres[] = Genre::factory()->create();
+        foreach ($genre_groups as $group) {
+            $created_genres = Genre::factory()->count(10)->create(['genre_group_id' => $group->id])->toArray();
+            $genres = array_merge($genres, $created_genres);
         }
+
 
         // 店とジャンルの関連付け
         foreach ($restaurants as $restaurant) {
             RestaurantGenre::create([
                 'restaurant_id' => $restaurant->id,
-                'genre_id' => $genres[rand(0,9)]->id
+                'genre_id' => $genres[rand(0,49)]['id']
             ]);
         }
-
-        
-
     }
 }
