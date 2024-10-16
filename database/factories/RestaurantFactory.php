@@ -19,7 +19,8 @@ class RestaurantFactory extends Factory
         return [
             'restaurant_name' => fake()->realText(10),
             'zip_cd'          => fake()->postcode(),
-            'address'         => "東京都近藤市中央区若松町津田1-8-4 コーポ井高101号",
+            'address'         => fake()->prefecture() . fake()->city(),
+            'address_detail'  => fake()->streetAddress(),
             'email'           => fake()->safeEmail(),
             'tel_no'          => fake()->phoneNumber(),
             'price_min'       => 1000,

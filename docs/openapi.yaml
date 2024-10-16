@@ -96,12 +96,11 @@ paths:
                     restaurant:
                       type: object
                       items:
-                        $ref: '#/components/schemas/Restaurant'
+                        $ref: '#/components/schemas/GetRestaurantsResponse'
                       example:
                         - id: 1
                           name: たこ焼きや
-                          address: 東京都近藤市中央区若松町津田1-8-4 コーポ井高101号
-                          email: aaa@example.com
+                          address: 東京都近藤市
                           price_min: 1000
                           price_max: 4000
                           post_num: 10
@@ -159,6 +158,42 @@ components:
                       description: ジャンル名
                       type: string
                       example: ジャンル名
+    GetRestaurantsResponse:
+      type: object
+      properties:
+        restaurants:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                description: 店ID
+                type: number
+                example: 1
+              restaurant_name:
+                description: 店名
+                type: string
+                example: 'たこやきや'
+              address:
+                description: 住所
+                type: string
+                example: '大分県日田市'
+              price_min:
+                description: 価格（最小）
+                type: number
+                example: 1000
+              price_max:
+                description: 価格（最大）
+                type: number
+                example: 4000
+              post_num:
+                description: 投稿数
+                type: number
+                example: 10
+              point_avg:
+                description: 平均点
+                type: number
+                example: 3.5
 
 
     User:

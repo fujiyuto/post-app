@@ -50,8 +50,7 @@ class RestaurantService {
 
         // $response_data = [];
         // foreach ($restaurants as $restaurant) {
-        //     $update_datetime = new Carbon($restaurant->updated_at);
-        //     $update_date     = $update_datetime->format('Y-m-d');
+
         //     $response_data[] = [
         //         'restaurant' => [
         //             'id'         => $restaurant->restaurant_id,
@@ -69,11 +68,43 @@ class RestaurantService {
 
         // print_r($genre_names);
 
-        $response_data = Restaurant::search("{$keyword} {$region} {$genre_unique_name}")->get();
+        $search_data = Restaurant::search("{$keyword} {$region} {$genre_unique_name}")->with(['hitsPerPage' => 30])->get();
+        $restaurant_id_list = $search_data->pluck('id');
+        $resraurant_genre_rel = RestaurantGenre::selectRaw('restaurant_genres.restaurant_id, genres.unique_name, genres.genre_name')
+                                                ->join('genres', 'restaurant_genres.genre_id', '=', 'genres.id')
+                                                ->whereIn('restaurant_genres.restaurant_id', $restaurant_id_list)
+                                                ->get();
 
-        Log::debug($genre_unique_name);
+        $restaurant_genre_map = [];
+        foreach ($resraurant_genre_rel as $rel) {
+            if ( !array_key_exists($rel->restaurant_id, $restaurant_genre_map) ) {
+                $restaurant_genre_map[$rel->restaurant_id] = [];
+            }
+            $restaurant_genre_map[$rel->restaurant_id][] = [
+                'unique_name' => $rel->unique_name,
+                'genre_name'  => $rel->genre_name
+            ];
+        }
+
+        $response_data = [];
+        foreach($search_data as $restaurant) {
+            $update_datetime = new Carbon($restaurant['updated_at']);
+            $update_date     = $update_datetime->format('Y-m-d');
+            $response_data[] = [
+                'id' => $restaurant->id,
+                'restaurant_name' => $restaurant->restaurant_name,
+                'address' => $restaurant->address,
+                'price_min' => $restaurant->price_min,
+                'price_max' => $restaurant->price_max,
+                'post_num'  => $restaurant->post_num,
+                'point_avg' => $restaurant->point_avg,
+                'updated_at' => $update_date,
+                'genres' => $restaurant_genre_map[$restaurant->id]
+            ];
+        }
 
         return [
+            // 'restaurants' => $restaurants
             'restaurants' => $response_data
         ];
     }

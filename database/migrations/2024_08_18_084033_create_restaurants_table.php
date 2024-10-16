@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('restaurant_name')->comment('名前');
             $table->string('zip_cd', 7)->comment('郵便番号');
             $table->string('address')->comment('住所');
+            $table->string('address_detail')->nullable()->comment('住所詳細');
             $table->string('email')->nullable()->comment('メールアドレス');
             $table->string('tel_no')->comment('電話番号');
             $table->unsignedInteger('price_min')->nullable()->comment('価格（最小）');

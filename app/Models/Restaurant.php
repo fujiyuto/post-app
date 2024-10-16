@@ -16,6 +16,7 @@ class Restaurant extends Model
         'restaurant_name',
         'zip_cd',
         'address',
+        'address_detail',
         'email',
         'tel_no',
         'price_min',
@@ -47,7 +48,8 @@ class Restaurant extends Model
             'price_max'       => $this->price_max,
             'post_num'        => $this->post_num,
             'point_avg'       => $this->point_avg,
-            'genres'          => $this->genres->pluck('unique_name')->toArray()
+            'genres'          => $this->genres->pluck('unique_name')->toArray(),
+            'updated_at'      => $this->updated_at
         ];
     }
 }
