@@ -9,7 +9,9 @@ use App\Models\Follow;
 use App\Models\Like;
 use App\Models\Genre;
 use App\Models\GenreGroup;
+use App\Models\ImageCategory;
 use App\Models\RestaurantGenre;
+use App\Models\RestaurantImage;
 use Database\Factories\UserFactory;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -22,12 +24,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Restaurant::factory()
-        //         ->count(10)
-        //         ->hasPosts(3, [
-        //             'user_id' => User::factory()
-        //         ])
-        //         ->create();
 
         // ユーザー作成
         $users = User::factory()->count(10)->create();
@@ -87,6 +83,31 @@ class DatabaseSeeder extends Seeder
                 'restaurant_id' => $restaurant->id,
                 'genre_id' => $genres[rand(0,49)]['id']
             ]);
+        }
+
+        // 店の画像についてのデータ
+        $image_category_arr = [
+            '1000' => '料理',
+            '1100' => 'メニュー',
+            '1200' => '外観',
+            '1300' => '店内'
+        ];
+        $image_categories = [];
+        foreach ($image_category_arr as $key => $name) {
+            $image_categories[] = ImageCategory::create([
+                'unique_cd' => $key,
+                'name'      => $name
+            ]);
+        }
+        foreach ($image_categories as $ic) {
+            foreach ($restaurants as $restaurant) {
+                RestaurantImage::create([
+                    'restaurant_id' => $restaurant->id,
+                    'image_category_id' => $ic->id,
+                    'image_url' => 'https://placehold.jp/300*200.png',
+                    'is_thumbnail' => $ic->id == 1 ? 1 : 0
+                ]);
+            }
         }
     }
 }

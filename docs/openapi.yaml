@@ -21,11 +21,11 @@ paths:
     get:
       tags:
         - post
-      summary: ユーザーの投稿を取得する
+      summary: ユーザーの投稿一覧取得
       description: Restaurantモデルの配列を返す.
       parameters: # URLパラメータ
-        - name: userId
-          in: path
+        - in: path
+          name: userId
           description: 会員ID
           required: true
           schema:
@@ -66,7 +66,7 @@ paths:
     get:
       tags:
         - restaurant
-      summary: 店の一覧を返す
+      summary: 店一覧取得
       parameters:
         - in: query
           name: genre_name
@@ -89,31 +89,30 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    restaurant:
-                      type: object
-                      items:
-                        $ref: '#/components/schemas/GetRestaurantsResponse'
-                      example:
-                        - id: 1
-                          name: たこ焼きや
-                          address: 東京都近藤市
-                          price_min: 1000
-                          price_max: 4000
-                          post_num: 10
-                          point_avg: 3.5
-                          updated_at: 2024-01-01
-                    genres:
-                      type: array
-                      items:
-                        type: string
-                      example:
-                        - テストジャンル1
-                        - テストジャンル2
-                        - テストジャンル3
+                $ref: '#/components/schemas/GetRestaurantsResponse'
+  /restaurants/{restaurantId}:
+    get:
+      tags:
+        - restaurant
+      summary: 店詳細取得
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: RestaurantモデルとRestaurantに紐づくGenreモデルの配列を返す
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRestaurantResponse'
+
+
+
+
+
   /genres:
     get:
       tags:
@@ -165,6 +164,15 @@ components:
           type: array
           items:
             type: object
+            required:
+              - id
+              - restaurant_name
+              - address
+              - post_num
+              - point_avg
+              - updated_at
+              - thumbnail_image
+              - genres
             properties:
               id:
                 description: 店ID
@@ -177,24 +185,134 @@ components:
               address:
                 description: 住所
                 type: string
-                example: '大分県日田市'
+                example: 大分県日田市
               price_min:
                 description: 価格（最小）
-                type: number
+                type: integer
                 example: 1000
               price_max:
                 description: 価格（最大）
-                type: number
+                type: integer
                 example: 4000
               post_num:
                 description: 投稿数
-                type: number
+                type: integer
                 example: 10
               point_avg:
                 description: 平均点
                 type: number
                 example: 3.5
+              updated_at:
+                description: 更新日
+                type: string
+                example: 2024-01-01
+              thumbnail_image:
+                description: サムネイル画像
+                type: string
+                example:  https://test.png
+              genres:
+                description: 店のジャンル
+                type: array
+                items:
+                  type: object
+                  properties:
+                    unique_name:
+                      description: ジャンルユニーク名
+                      type: string
+                      example: genre_unique_1
+                    genre_name:
+                      description: ジャンル名
+                      type: string
+                      example: genre_name_1
 
+    GetRestaurantResponse:
+      type: object
+      required:
+        - id
+        - restaurant_name
+        - address
+        - tel_no
+        - post_num
+        - point_avg
+        - updated_at
+      properties:
+        id:
+          description: 店ID
+          type: number
+          example: 1
+        restaurant_name:
+          description: 店名
+          type: string
+          example: 'たこやきや'
+        zip_cd:
+          description: 郵便番号
+          type: string
+          example: 1230088
+        address:
+          description: 住所
+          type: string
+          example: 大分県日田市
+        address_detail:
+          description: 住所詳細
+          type: string
+          example: 中央3-8-1
+        email:
+          description: メールアドレス
+          type: string
+          example: test@example.com
+        tel_no:
+          description: 電話番号
+          type: string
+          example: 07084930855
+        price_min:
+          description: 価格（最小）
+          type: integer
+          example: 1000
+        price_max:
+          description: 価格（最大）
+          type: integer
+          example: 4000
+        post_num:
+          description: 投稿数
+          type: integer
+          example: 10
+        point_avg:
+          description: 平均点
+          type: number
+          example: 3.5
+        updated_at:
+          description: 更新日
+          type: string
+          example: 2024-01-01
+        images:
+                type: object
+                additionalProperties:
+                  type: object
+                  properties:
+                    name:
+                      description: 画像カテゴリー名
+                      type: string
+                      example: 画像ジャンル1
+                    image_urls:
+                      description: 画像URLリスト
+                      type: array
+                      items:
+                        type: string
+                        example: https://test.png
+        genres:
+          description: 店のジャンル
+          type: array
+          items:
+            type: object
+            properties:
+              unique_name:
+                description: ジャンルユニーク名
+                type: string
+                example: genre_unique_1
+              genre_name:
+                description: ジャンル名
+                type: string
+                example: genre_name_1
 
     User:
       type: object

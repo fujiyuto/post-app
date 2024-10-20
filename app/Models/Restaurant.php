@@ -38,6 +38,11 @@ class Restaurant extends Model
         return $this->belongsToMany(Genre::class, 'restaurant_genres', 'restaurant_id', 'genre_id');
     }
 
+    public function restaurant_images(): HasMany
+    {
+        return $this->hasMany(RestaurantImage::class);
+    }
+
     public function toSearchableArray(): array
     {
         return [

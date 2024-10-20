@@ -20,10 +20,10 @@ class Genre extends Model
 
     public function restaurants(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class, 'restaurant_genres', 'genre_id', 'restaurant_id');
+        return $this->belongsToMany(Restaurant::class, 'restaurant_genres', 'genre_id', 'restaurant_id');
     }
 
-    public function genre(): BelongsTo
+    public function genre_group(): BelongsTo
     {
         return $this->belongsTo(GenreGroup::class);
     }
