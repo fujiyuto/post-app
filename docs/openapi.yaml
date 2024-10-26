@@ -136,27 +136,24 @@ components:
   schemas:
     GetGenresResponse:
       type: object
-      properties:
-        genre_groups:
-          type: object
-          additionalProperties:
-            type: object
-            properties:
-              group_name:
-                type: string
-              genres:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    unique_name:
-                      description: ジャンルユニーク名
-                      type: string
-                      example: 'genre_unique_test'
-                    genre_name:
-                      description: ジャンル名
-                      type: string
-                      example: ジャンル名
+      additionalProperties:
+        type: object
+        properties:
+          group_name:
+            type: string
+          genres:
+            type: array
+            items:
+              type: object
+              properties:
+                unique_name:
+                  description: ジャンルユニーク名
+                  type: string
+                  example: 'genre_unique_test'
+                genre_name:
+                  description: ジャンル名
+                  type: string
+                  example: ジャンル名
     GetRestaurantsResponse:
       type: object
       properties:

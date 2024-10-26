@@ -83,7 +83,7 @@ class RestaurantService
                                             ->get();
         $images = [];
         foreach ($restaurant_images as $ri) {
-            if ( !array_key_exists($ri->restaurant_id, $images) ) {
+            if (!array_key_exists($ri->unique_cd, $images)) {
                 $images[$ri->unique_cd] = [
                     'name' => $ri->name,
                     'image_urls' => []
