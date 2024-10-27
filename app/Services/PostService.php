@@ -13,17 +13,23 @@ use Illuminate\Support\Facades\Log;
 
 class PostService
 {
-    public function getPosts()
+    public function getRestaurantPosts(int $restaurant_id)
     {
 
-        $posts = Post::selectRaw('posts.id as post_id, user_id, restaurant_id, title, content, visited_at, period_of_time, points, posts.price_min, posts.price_max, image_url1, image_url2, image_url3, posts.created_at, users.user_name, restaurants.restaurant_name')
-        ->join('users', 'posts.user_id', '=', 'users.id')
-        ->join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
-        ->orderByDesc('posts.created_at')
-        ->get();
+        // $posts = Post::selectRaw('posts.id as post_id, user_id, restaurant_id, title, content, visited_at, period_of_time, points, posts.price_min, posts.price_max, image_url1, image_url2, image_url3, posts.created_at, users.user_name, restaurants.restaurant_name')
+        // ->join('users', 'posts.user_id', '=', 'users.id')
+        // ->join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
+        // ->orderByDesc('posts.created_at')
+        // ->get();
+
+        // 投稿とユーザー情報の結合
+        $posts = Post::selectRaw('posts.id as post_id, posts.title, posts.visited_at, posts.period_of_time, posts.points, posts.price_min, posts.price_max, posts.image_url1, posts.image_url2, posts.image_url3, posts.created_at, users.id as user_id, users.user_name, users.follower_num, users.post_num')
+                        ->join('users', 'posts.user_id', '=', 'users.id')
+                        ->where('posts.restaurant_id', $restaurant_id)
+                        ->get();
 
         if ($posts->isEmpty()) {
-            throw new DataNotFoundException('投稿一覧取得エラー');
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         $response_data = [];
@@ -32,17 +38,14 @@ class PostService
             $post_created_date     = $post_created_datetime->format('Y-m-d');
             $response_data[] = [
                 'user' => [
-                    'id'   => $post->user_id,
-                    'name' => $post->user_name
-                ],
-                'restaurant' => [
-                    'id'   => $post->restaurant_id,
-                    'name' => $post->restaurant_name
+                    'id'           => $post->user_id,
+                    'user_name'    => $post->user_name,
+                    'follower_num' => $post->follower_num,
+                    'post_num'     => $post->post_num
                 ],
                 'post' => [
                     'id'             => $post->post_id,
                     'title'          => $post->title,
-                    'content'        => $post->content,
                     'visited_at'     => $post->visited_at,
                     'period_of_time' => $post->period_of_time,
                     'points'         => $post->points,
@@ -57,9 +60,7 @@ class PostService
         }
 
         return [
-            'data' => [
-                'posts' => $response_data
-            ]
+            'posts' => $response_data
         ];
     }
 
@@ -111,7 +112,7 @@ class PostService
                     ->first();
 
         if (!$post) {
-            throw new DataNotFoundException('投稿取得エラー');
+            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
         $created_datetime = new Carbon($post->created_at);

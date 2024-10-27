@@ -141,6 +141,20 @@ class FollowService {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
+        // フォローした人のフォロー数、フォローされた人のフォロワー数の値を更新
+        $users = User::whereIn('id', [$follow_id, $follower_id])->get();
+        foreach ($users as $user) {
+            if ( $user->id === $follow_id ) {
+                $user->follow_num++;
+            } else {
+                $user->follower_num++;
+            }
+
+            if ( !$user->save() ) {
+                throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+            }
+        }
+
         return [
             'data' => [
                 'ok' => true

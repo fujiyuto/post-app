@@ -21,6 +21,8 @@ return new class () extends Migration {
             $table->unsignedTinyInteger('gender')->comment('性別（1:男、2:女）');
             $table->unsignedTinyInteger('user_type')->comment('会員タイプ（1:顧客、2:店主）');
             $table->integer('post_num')->default(0)->comment('投稿数');
+            $table->integer('follower_num')->default(0)->comment('フォロワー数');
+            $table->integer('follow_num')->default(0)->comment('フォロー数');
             // $table->rememberToken();
             $table->timestamps();
         });

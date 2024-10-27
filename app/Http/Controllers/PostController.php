@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Restaurant;
 use App\Http\Requests\PostCreateRequest;
 use App\Http\Requests\PostEditRequest;
 use App\Http\Requests\PostDeleteRequest;
@@ -22,11 +23,11 @@ class PostController extends Controller
         $this->postService = $postService;
     }
 
-    public function index_restaurant(Request $request)
+    public function index_restaurant(Restaurant $restaurant)
     {
         try {
 
-            $data = $this->postService->getPosts();
+            $data = $this->postService->getRestaurantPosts($restaurant->id);
 
             return $this->responseJson($data);
 
