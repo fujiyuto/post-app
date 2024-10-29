@@ -23,7 +23,7 @@ class PostService
         // ->get();
 
         // 投稿とユーザー情報の結合
-        $posts = Post::selectRaw('posts.id as post_id, posts.title, posts.visited_at, posts.period_of_time, posts.points, posts.price_min, posts.price_max, posts.image_url1, posts.image_url2, posts.image_url3, posts.created_at, users.id as user_id, users.user_name, users.follower_num, users.post_num')
+        $posts = Post::selectRaw('posts.id as post_id, posts.title, posts.visited_at, posts.period_of_time, posts.points, posts.price_min, posts.price_max, posts.image_url1, posts.created_at, users.id as user_id, users.user_name, users.follower_num, users.post_num')
                         ->join('users', 'posts.user_id', '=', 'users.id')
                         ->where('posts.restaurant_id', $restaurant_id)
                         ->get();
@@ -51,9 +51,7 @@ class PostService
                     'points'         => $post->points,
                     'price_min'      => $post->price_min,
                     'price_max'      => $post->price_max,
-                    'image_url1'     => $post->image_url1,
-                    'image_url2'     => $post->image_url2,
-                    'image_url3'     => $post->image_url3,
+                    'image_url'      => $post->image_url1,
                     'created_at'     => $post_created_date
                 ]
             ];
@@ -81,6 +79,11 @@ class PostService
         foreach ($posts as $post) {
             $created_datetime = new Carbon($post->created_at);
             $created_date     = $created_datetime->format('Y-m-d');
+            $images = [
+                $post->image_url1,
+                $post->image_url2,
+                $post->image_url3,
+            ];
             $response_data['posts'][]  = [
                 'id'              => $post->id,
                 'restaurant_id'   => $post->restaurant_id,
@@ -92,9 +95,7 @@ class PostService
                 'points'          => $post->points,
                 'price_min'       => $post->price_min,
                 'price_max'       => $post->price_max,
-                'image_url1'      => $post->image_url1,
-                'image_url2'      => $post->image_url2,
-                'image_url3'      => $post->image_url3,
+                'images'          => $images,
                 'created_at'      => $created_date
             ];
         }
@@ -137,9 +138,7 @@ class PostService
         ];
 
         return [
-            'data' => [
-                'post' => $response_data
-            ]
+            'post' => $response_data
         ];
     }
 

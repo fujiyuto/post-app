@@ -17,6 +17,25 @@ servers:
   - url: https:://prod.sample.com/v1
     description: 本番環境サーバー
 paths:
+  /posts/restaurant/{restaurantId}:
+    get:
+      tags:
+        - post
+      summary: 店への投稿一覧
+      description: ''
+      parameters:
+        - in: path
+          name: restaurantId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: UserモデルとPostモデルの配列を返す
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRestaurantPostsResponse'
   /posts/user/{userId}:
     get:
       tags:
@@ -36,32 +55,54 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Post'
-                example:
-                  - id: 1
-                    title: 感動した
-                    content: 感動した内容
-                    visited_at: 2024-01-01
-                    period_of_time: 1
-                    points: 3.5
-                    price_min: 1000
-                    price_max: 1500
-                    image_url1: https://tabelog1.png
-                    image_url2: https://tabelog2.png
-                    image_url3: https://tabelog3.png
-                  - id: 2
-                    title: 激怒した
-                    content: 激怒した内容
-                    visited_at: 2024-01-01
-                    period_of_time: 2
-                    points: 4.0
-                    price_min: 2000
-                    price_max: 4500
-                    image_url1: https://tabelog1.png
-                    image_url2: https://tabelog2.png
-                    image_url3: https://tabelog3.png
+                $ref: '#/components/schemas/GetUserPostResponse'
+              example:
+                - id: 1
+                  title: 感動した
+                  content: 感動した内容
+                  visited_at: 2024-01-01
+                  period_of_time: 1
+                  points: 3.5
+                  price_min: 1000
+                  price_max: 1500
+                  images:
+                    - https://tabelog1.png
+                    - https://tabelog2.png
+                    - https://tabelog3.png
+                  created_at: 2024-01-01
+                - id: 2
+                  title: 激怒した
+                  content: 激怒した内容
+                  visited_at: 2024-01-01
+                  period_of_time: 2
+                  points: 4.0
+                  price_min: 2000
+                  price_max: 4500
+                  images:
+                    - https://tabelog1.png
+                    - https://tabelog2.png
+                    - https://tabelog3.png
+                  created_at: 2024-01-01
+  /posts/{postId}:
+    get:
+      tags:
+        - post
+      summary: 投稿の詳細取得
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 店の詳細情報を返す
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetPostResponse'
+
+
   /restaurants:
     get:
       tags:
@@ -221,7 +262,6 @@ components:
                       description: ジャンル名
                       type: string
                       example: genre_name_1
-
     GetRestaurantResponse:
       type: object
       required:
@@ -310,180 +350,238 @@ components:
                 description: ジャンル名
                 type: string
                 example: genre_name_1
+    GetRestaurantPostsResponse:
+      description: 店の投稿一覧ページで取得するデータ
+      properties:
+        posts:
+          type: array
+          items:
+            type: object
+            required:
+              - user
+              - post
+            properties:
+              user:
+                type: object
+                required:
+                  - id
+                  - user_name
+                  - follower_num
+                  - post_num
+                properties:
+                  id:
+                    type: integer
+                    description: ユーザーID
+                    example: 1
+                  user_name:
+                    type: string
+                    description: ユーザー名
+                    example: test_user
+                  follower_num:
+                    type: integer
+                    description: フォロワー数
+                    example: 150
+                  post_num:
+                    type: integer
+                    description: 投稿数
+                    example: 10
+              post:
+                type: object
+                required:
+                  - id
+                  - title
+                  - period_of_time
+                  - points
+                  - price_min
+                  - price_max
+                  - image_url
+                  - created_at
+                properties:
+                  id:
+                    type: integer
+                    description: 投稿ID
+                    example: 1
+                  title:
+                    type: string
+                    description: 投稿タイトル
+                    example: テストタイトル
+                  visited_at:
+                    type: string
+                    description: 訪問日
+                    example: 2024-01-01
+                  period_of_time:
+                    type: integer
+                    description: 時間帯(1:昼、2:夜)
+                    example: 1
+                  points:
+                    type: number
+                    description: 点数
+                    example: 3.5
+                  price_min:
+                    type: integer
+                    description: 価格（最小）
+                    example: 1000
+                  price_max:
+                    type: integer
+                    description: 価格（最大）
+                    example: 4000
+                  image_url:
+                    type: string
+                    description: 画像URL
+                    example: https://test1_image.png
+                  created_at:
+                    type: string
+                    description: 投稿日
+                    example: 2024-01-01
+    GetUserPostResponse:
+      properties:
+        posts:
+          type: array
+          items:
+            type: object
+            required:
+              - id
+              - restaurant_id
+              - restaurant_name
+              - title
+              - period_of_time
+              - points
+              - price_min
+              - price_max
+              - images
+              - created_at
+            properties:
+              id:
+                type: integer
+                description: 投稿ID
+                example: 1
+              restaurant_id:
+                type: integer
+                description: 店ID
+                example: 1
+              restaurant_name:
+                type: string
+                description: 店名
+                example: たこやきや
+              title:
+                type: string
+                description: 投稿タイトル
+                example: テストタイトル
+              visited_at:
+                type: string
+                description: 訪問日
+                example: 2024-01-01
+              period_of_time:
+                type: integer
+                description: 時間帯(1:昼、2:夜)
+                example: 1
+              points:
+                type: number
+                description: 点数
+                example: 3.5
+              price_min:
+                type: integer
+                description: 価格（最小）
+                example: 1000
+              price_max:
+                type: integer
+                description: 価格（最大）
+                example: 4000
+              images:
+                type: array
+                description: 画像URLの配列
+                items:
+                  type: string
+                  description: 画像URL
+                example:
+                  - https://tabelog1.png
+                  - https://tabelog2.png
+                  - https://tabelog3.png
+              created_at:
+                type: string
+                description: 投稿日
+                example: 2024-01-01
+    GetPostResponse:
+      properties:
+        post:
+          type: object
+          required:
+            - id
+            - user_id
+            - user_name
+            - restaurant_id
+            - restaurant_name
+            - title
+            - content
+            - period_of_time
+            - points
+            - price_min
+            - price_max
+            - images
+            - created_at
+          properties:
+            id:
+              type: integer
+              description: 投稿ID
+              example: 1
+            user_id:
+              type: integer
+              description: ユーザーID
+              example: 1
+            user_name:
+              type: string
+              description: ユーザー名
+              example: test_user
+            restaurant_id:
+              type: integer
+              description: 店ID
+              example: 1
+            restaurant_name:
+              type: string
+              description: 店名
+              example: たこやきや
+            title:
+              type: string
+              description: 投稿タイトル
+              example: テストタイトル
+            content:
+              type: string
+              description: テスト内容
+              example: これはテストの内容です
+            visited_at:
+              type: string
+              description: 訪問日
+              example: 2024-01-01
+            period_of_time:
+              type: integer
+              description: 時間帯(1:昼、2:夜)
+              example: 1
+            points:
+              type: number
+              description: 点数
+              example: 3.5
+            price_min:
+              type: integer
+              description: 価格（最小）
+              example: 1000
+            price_max:
+              type: integer
+              description: 価格（最大）
+              example: 4000
+            images:
+              type: array
+              description: 画像URLの配列
+              items:
+                type: string
+                description: 画像URL
+              example:
+                - https://test1_image.png
+                - https://test2_image.png
+                - https://test3_image.png
+            created_at:
+              type: string
+              description: 投稿日
+              example: 2024-01-01
 
-    User:
-      type: object
-      required:
-        - id
-        - user_name
-        - email
-        - tel_no
-        - birthday
-        - password
-        - gender
-        - user_type
-        - post_num
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 1
-        user_name:
-          type: string
-          example: test_user
-        email:
-          type: string
-          example: test@example.com
-        tel_no:
-          type: string
-          example: 08011112222
-        birthday:
-          type: string
-          example: 2024-01-01
-        email_verified_at:
-          type: string
-          example: 2024-01-01 23:59:59
-        password:
-          type: string
-          example: password
-        gender:
-          type: integer
-          example: 1
-        user_type:
-          type: integer
-          example: 1
-        post_num:
-          type: integer
-          example: 10
-        created_at:
-          type: string
-          example: 2024-01-01 23:59:59
-        deleted_at:
-          type: string
-          example: 2024-01-01 23:59:59
-    Restaurant:
-      type: object
-      required:
-        - id
-        - restaurant_name
-        - zip_cd
-        - address
-        - tel_no
-        - post_num
-        - point_avg
-      properties:
-        id:
-          type: integer
-          example: 1
-        restaurant_name:
-          type: string
-          example: たこやきや
-        zip_cd:
-          type: string
-          example: 1234567
-        address:
-          type: string
-          example: 大分県日田市中央1丁目11-1
-        email:
-          type: string
-          example: text@example.com
-        tel_no:
-          type: string
-          example: 056489395039
-        price_min:
-          type: integer
-          example: 1000
-        price_max:
-          type: integer
-          example: 5000
-        post_num:
-          type: integer
-          example: 10
-        point_avg:
-          type: number
-          example: 3.5
-        created_at:
-          type: string
-          example: 2024-01-01 23:59:59
-        deleted_at:
-          type: string
-          example: 2024-01-01 23:59:59
-    Post:
-      type: object
-      required:
-        - id
-        - user_id
-        - restaurant_id
-        - title
-        - content
-        - period_of_time
-        - points
-      properties:
-        id:
-          type: integer
-          example: 1
-        user_id:
-          type: integer
-          example: 1
-        restaurant_id:
-          type: integer
-          example: 1
-        title:
-          type: string
-          example: テストタイトル
-        content:
-          type: string
-          example: テスト内容
-        visited_at:
-          type: string
-          example: 2024-01-01
-        period_of_time:
-          type: integer
-          example: 1
-        points:
-          type: number
-          example: 3.5
-        price_min:
-          type: integer
-          example: 1000
-        price_max:
-          type: integer
-          example: 4000
-        image_url1:
-          type: string
-          example: https://test1_image.png
-        image_url2:
-          type: string
-          example: https://test2_image.png
-        image_url3:
-          type: string
-          example: https://test3_image.png
-        created_at:
-          type: string
-          example: 2024-01-01 23:59:59
-        deleted_at:
-          type: string
-          example: 2024-01-01 23:59:59
-    Genre:
-      type: object
-      required:
-        - id
-        - unique_name
-        - genre_name
-      properties:
-        id:
-          type: integer
-          example: 1
-        unique_name:
-          type: string
-          example: test1
-        genre_name:
-          type: string
-          example: テストジャンル1
-        created_at:
-          type: string
-          example: 2024-01-01 23:59:59
-        deleted_at:
-          type: string
-          example: 2024-01-01 23:59:59
+
 

@@ -57,13 +57,13 @@ Route::controller(UserController::class)->group(function () {
 Route::controller(PostController::class)->group(function () {
 
     // 店への投稿一覧取得
-    Route::get('/posts/{restaurant}', 'index_restaurant')->name('posts.index_restaurant');
-
-    // 投稿詳細取得
-    Route::get('/posts/{post}', 'show')->where('post', '[0-9]+')->name('posts.show');
+    Route::get('/posts/restaurant/{restaurant}', 'index_restaurant')->name('posts.index_restaurant');
 
     // ユーザーの投稿一覧取得
     Route::get('/posts/user/{user}', 'index_user')->where('user', '[0-9]+')->name('posts.index_user');
+
+    // 投稿詳細取得
+    Route::get('/posts/{post}', 'show')->where('post', '[0-9]+')->name('posts.show');
 
     Route::middleware('customAuth')->group(function () {
 
