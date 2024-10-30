@@ -57,7 +57,7 @@ Route::controller(UserController::class)->group(function () {
 Route::controller(PostController::class)->group(function () {
 
     // 店への投稿一覧取得
-    Route::get('/posts/restaurant/{restaurant}', 'index_restaurant')->name('posts.index_restaurant');
+    Route::get('/posts/restaurant/{restaurant}', 'index_restaurant')->where('restaurant', '[0-9]+')->name('posts.index_restaurant');
 
     // ユーザーの投稿一覧取得
     Route::get('/posts/user/{user}', 'index_user')->where('user', '[0-9]+')->name('posts.index_user');

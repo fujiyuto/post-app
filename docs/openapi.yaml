@@ -502,86 +502,83 @@ components:
                 description: 投稿日
                 example: 2024-01-01
     GetPostResponse:
+      required:
+        - id
+        - user_id
+        - user_name
+        - restaurant_id
+        - restaurant_name
+        - title
+        - content
+        - period_of_time
+        - points
+        - price_min
+        - price_max
+        - images
+        - created_at
       properties:
-        post:
-          type: object
-          required:
-            - id
-            - user_id
-            - user_name
-            - restaurant_id
-            - restaurant_name
-            - title
-            - content
-            - period_of_time
-            - points
-            - price_min
-            - price_max
-            - images
-            - created_at
-          properties:
-            id:
-              type: integer
-              description: 投稿ID
-              example: 1
-            user_id:
-              type: integer
-              description: ユーザーID
-              example: 1
-            user_name:
-              type: string
-              description: ユーザー名
-              example: test_user
-            restaurant_id:
-              type: integer
-              description: 店ID
-              example: 1
-            restaurant_name:
-              type: string
-              description: 店名
-              example: たこやきや
-            title:
-              type: string
-              description: 投稿タイトル
-              example: テストタイトル
-            content:
-              type: string
-              description: テスト内容
-              example: これはテストの内容です
-            visited_at:
-              type: string
-              description: 訪問日
-              example: 2024-01-01
-            period_of_time:
-              type: integer
-              description: 時間帯(1:昼、2:夜)
-              example: 1
-            points:
-              type: number
-              description: 点数
-              example: 3.5
-            price_min:
-              type: integer
-              description: 価格（最小）
-              example: 1000
-            price_max:
-              type: integer
-              description: 価格（最大）
-              example: 4000
-            images:
-              type: array
-              description: 画像URLの配列
-              items:
-                type: string
-                description: 画像URL
-              example:
-                - https://test1_image.png
-                - https://test2_image.png
-                - https://test3_image.png
-            created_at:
-              type: string
-              description: 投稿日
-              example: 2024-01-01
+        id:
+          type: integer
+          description: 投稿ID
+          example: 1
+        user_id:
+          type: integer
+          description: ユーザーID
+          example: 1
+        user_name:
+          type: string
+          description: ユーザー名
+          example: test_user
+        restaurant_id:
+          type: integer
+          description: 店ID
+          example: 1
+        restaurant_name:
+          type: string
+          description: 店名
+          example: たこやきや
+        title:
+          type: string
+          description: 投稿タイトル
+          example: テストタイトル
+        content:
+          type: string
+          description: テスト内容
+          example: これはテストの内容です
+        visited_at:
+          type: string
+          description: 訪問日
+          example: 2024-01-01
+        period_of_time:
+          type: integer
+          description: 時間帯(1:昼、2:夜)
+          example: 1
+        points:
+          type: number
+          description: 点数
+          example: 3.5
+        price_min:
+          type: integer
+          description: 価格（最小）
+          example: 1000
+        price_max:
+          type: integer
+          description: 価格（最大）
+          example: 4000
+        images:
+          type: array
+          description: 画像URLの配列
+          items:
+            type: string
+            description: 画像URL
+          example:
+            - https://test1_image.png
+            - https://test2_image.png
+            - https://test3_image.png
+        created_at:
+          type: string
+          description: 投稿日
+          example: 2024-01-01
 
 
 

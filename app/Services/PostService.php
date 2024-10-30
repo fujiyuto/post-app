@@ -118,6 +118,11 @@ class PostService
 
         $created_datetime = new Carbon($post->created_at);
         $created_date     = $created_datetime->format('Y-m-d');
+        $images = [
+            $post->image_url1,
+            $post->image_url2,
+            $post->image_url3,
+        ];
         $response_data = [
             'id'              => $post->id,
             'user_id'         => $post->user_id,
@@ -131,15 +136,11 @@ class PostService
             'points'          => $post->points,
             'price_min'       => $post->price_min,
             'price_max'       => $post->price_max,
-            'image_url1'      => $post->image_url1,
-            'image_url2'      => $post->image_url2,
-            'image_url3'      => $post->image_url3,
+            'images'          => $images,
             'created_at'      => $created_date
         ];
 
-        return [
-            'post' => $response_data
-        ];
+        return $response_data;
     }
 
     public function createPost(
