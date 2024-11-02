@@ -30,59 +30,47 @@ class UserService
         $response_data = [];
 
         $response_data['user'] = [
-            'user_name'         => $user->user_name,
-            'email'             => $user->email,
-            'gender'            => $user->gender,
-            'user_type'         => $user->user_type
+            'user_name'    => $user->user_name,
+            'email'        => $user->email,
+            'tel_no'       => $user->tel_no,
+            'birthday'     => $user->birthday,
+            'gender'       => User::USER_GENDER_MAP[$user->gender],
+            'user_type'    => User::USER_TYPE_MAP[$user->user_type],
+            'post_num'     => $user->post_num,
+            'follower_num' => $user->follower_num,
+            'follow_num'   => $user->follow_num,
+            'visited_num'  => $user->visited_num,
         ];
-
-        // フォロワー数
-        $follower_count = Follow::where('follower_id', $user->id)->count();
-        // フォロー数
-        $follow_count   = Follow::where('follow_id', $user->id)->count();
-        $response_data['follow'] = [
-            'follower_count' => $follower_count,
-            'follow_count'   => $follow_count
-        ];
-
-        // 店の訪問数を集計
-        $visited_num = Post::where('user_id', $user->id)
-                            ->distinct('restaurant_id')
-                            ->count('restaurant_id');
-        $response_data['visited_count'] = $visited_num;
 
         // ユーザーの投稿一覧取得
         $posts = Post::join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
-                                ->orderByDesc('posts.id')
-                                ->get();
+        ->where('user_id', $user->id)
+        ->orderByDesc('posts.id')
+        ->get();
         if ( $posts->isEmpty() ) {
             $response_data['posts'] = [];
         } else {
             foreach ($posts as $post) {
                 $created_datetime = new Carbon($post->created_at);
                 $created_date     = $created_datetime->format('Y-m-d');
-                $response_data['posts'][]  = [
+
+                $response_data['posts'][] = [
                     'id'              => $post->id,
                     'restaurant_id'   => $post->restaurant_id,
                     'restaurant_name' => $post->restaurant_name,
                     'title'           => $post->title,
-                    'content'         => $post->content,
                     'visited_at'      => $post->visited_at,
                     'period_of_time'  => $post->period_of_time,
                     'points'          => $post->points,
                     'price_min'       => $post->price_min,
                     'price_max'       => $post->price_max,
-                    'image_url1'      => $post->image_url1,
-                    'image_url2'      => $post->image_url2,
-                    'image_url3'      => $post->image_url3,
+                    'image_url'       => $post->image_url1,
                     'created_at'      => $created_date
                 ];
             }
         }
 
-        return [
-            'data' => $response_data
-        ];
+        return  $response_data;
     }
 
     public function createUser(

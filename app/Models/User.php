@@ -41,18 +41,19 @@ class User extends Authenticatable
         'updated_at'
     ];
 
-    // /**
-    //  * Get the attributes that should be cast.
-    //  *
-    //  * @return array<string, string>
-    //  */
-    // protected function casts(): array
-    // {
-    //     return [
-    //         'email_verified_at' => 'datetime',
-    //         'password' => 'hashed',
-    //     ];
-    // }
+    public const USER_GENDER_MEN   = 1;
+    public const USER_GENDER_WOMEN = 2;
+    public const USER_GENDER_MAP = [
+        self::USER_GENDER_MEN   => '男性',
+        self::USER_GENDER_WOMEN => '女性'
+    ];
+
+    public const USER_TYPE_CUSTOMER = 1;
+    public const USER_TYPE_OWNER    = 2;
+    const USER_TYPE_MAP = [
+        self::USER_TYPE_CUSTOMER => '顧客',
+        self::USER_TYPE_OWNER    => '店主'
+    ];
 
     public function posts(): HasMany
     {

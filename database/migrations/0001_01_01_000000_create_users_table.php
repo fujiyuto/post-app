@@ -23,6 +23,7 @@ return new class () extends Migration {
             $table->integer('post_num')->default(0)->comment('投稿数');
             $table->integer('follower_num')->default(0)->comment('フォロワー数');
             $table->integer('follow_num')->default(0)->comment('フォロー数');
+            $table->integer('visited_num')->default(0)->comment('訪問した店の数');
             // $table->rememberToken();
             $table->timestamps();
         });

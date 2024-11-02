@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\PostCreated;
 use App\Exceptions\DataNotFoundException;
 use App\Exceptions\DataOperationException;
 use App\Exceptions\UnauthorizationException;
@@ -10,18 +11,12 @@ use App\Models\Restaurant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class PostService
 {
     public function getRestaurantPosts(int $restaurant_id)
     {
-
-        // $posts = Post::selectRaw('posts.id as post_id, user_id, restaurant_id, title, content, visited_at, period_of_time, points, posts.price_min, posts.price_max, image_url1, image_url2, image_url3, posts.created_at, users.user_name, restaurants.restaurant_name')
-        // ->join('users', 'posts.user_id', '=', 'users.id')
-        // ->join('restaurants', 'posts.restaurant_id', '=', 'restaurants.id')
-        // ->orderByDesc('posts.created_at')
-        // ->get();
-
         // 投稿とユーザー情報の結合
         $posts = Post::selectRaw('posts.id as post_id, posts.title, posts.visited_at, posts.period_of_time, posts.points, posts.price_min, posts.price_max, posts.image_url1, posts.created_at, users.id as user_id, users.user_name, users.follower_num, users.post_num')
                         ->join('users', 'posts.user_id', '=', 'users.id')
@@ -172,25 +167,19 @@ class PostService
             'image_url3'     => $image_url3
         ];
 
-        if ( !Post::create($insert_data) ) {
+        $post = Post::create($insert_data);
+
+        if ( !$post ) {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
-        // 店の平均点を再計算
-        $restaurant = Restaurant::where('id', $restaurant_id)->first();
-        if ( !$restaurant ) {
-            throw new DataNotFoundException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
-        }
-        $restaurant->point_avg = round((($restaurant->point_avg * $restaurant->post_num) + $points) / ($restaurant->post_num + 1), 1);
-        $restaurant->post_num++;
-        if ( !$restaurant->save() ) {
-            throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
-        }
+        // 投稿作成時のイベント
+        // 1. 店の平均点を再計算
+        // 2. ユーザーの店の訪問数を再計算
+        event(new PostCreated(Auth::user(), $restaurant_id, $post));
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 

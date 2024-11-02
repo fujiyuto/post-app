@@ -48,17 +48,35 @@ class DatabaseSeeder extends Seeder
             }
         }
         // フォロー作成
-        foreach ($users as $follow) {
-            foreach ($users as $follower) {
+        $follower_map = [];
+        $follow_map = [];
+        foreach ($users as $follower) {
+
+            if ( !array_key_exists($follower->id, $follower_map) ) {
+                $follower_map[$follower->id] = [];
+            }
+
+            foreach ($users as $follow) {
+
+                if ( !array_key_exists($follow->id, $follow_map) ) {
+                    $follow_map[$follow->id] = [];
+                }
+
                 if ($follow->id === $follower->id) continue;
-                Follow::create([
+                $f = Follow::create([
                     'follow_id' => $follow->id,
                     'follower_id' => $follower->id
                 ]);
+                $follower_map[$follower->id][] = $follow->id;
+                $follow_map[$follow->id][] = $follower->id;
             }
         }
-        // いいね作成
+
+        // いいね作成 & ユーザーの
         foreach ($users as $user) {
+            $user->follower_num = count($follower_map[$user->id]);
+            $user->follow_num = count($follow_map[$user->id]);
+            $user->save();
             foreach ($posts as $post) {
                 if ( $user->id === $post->user_id ) continue;
                 Like::create([
@@ -67,6 +85,7 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
         // ジャンルグループ作成
         $genre_groups = GenreGroup::factory()->count(5)->create();
         // ジャンル作成
