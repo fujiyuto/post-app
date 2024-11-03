@@ -18,16 +18,13 @@ class FormRequestException extends Exception
 
     public function report(): void
     {
-        Log::debug($this->getMessage());
         Log::debug($this->errors);
     }
 
     public function render(Request $request): JsonResponse
     {
         return response()->json([
-            'data' => [
-                'error' => $this->errors
-            ]
-        ], 500);
+            'error' => 'データが正しくありません'
+        ], 400);
     }
 }

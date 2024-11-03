@@ -97,9 +97,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -126,9 +124,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -157,7 +153,6 @@ class UserService
         ];
 
         if (! Auth::attempt($credentials)) {
-            // TODO
             throw new AuthenticateException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
@@ -172,9 +167,7 @@ class UserService
         Auth::logout();
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -217,9 +210,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -244,9 +235,7 @@ class UserService
 
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -289,9 +278,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -317,9 +304,7 @@ class UserService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -347,9 +332,7 @@ class UserService
         ->update(['status'  => PasswordToken::PASSWORD_TOKEN_INVALID]);
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 

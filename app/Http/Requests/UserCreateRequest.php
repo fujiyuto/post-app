@@ -37,11 +37,14 @@ class UserCreateRequest extends FormRequest
     public function messages(): array
     {
         // TODO
-        return [];
+        return [
+            
+        ];
     }
 
     protected function failedValidation(Validator $validator)
     {
+
         throw new FormRequestException($validator->errors()->all());
     }
 }

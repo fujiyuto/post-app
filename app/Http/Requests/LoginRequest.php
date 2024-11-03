@@ -35,6 +35,14 @@ class LoginRequest extends FormRequest
         return [];
     }
 
+    public function attributes(): array
+    {
+        return [
+            'email'    => 'メールアドレス',
+            'password' => 'パスワード'
+        ];
+    }
+
     protected function failedValidation(Validator $validator)
     {
         throw new FormRequestException($validator->errors()->all());
