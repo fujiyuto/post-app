@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('user_name')->comment('ユーザー名');
+            $table->string('user_name')->unique()->comment('ユーザー名');
             $table->string('email')->unique()->comment('メールアドレス');
             $table->string('tel_no', 13)->comment('電話番号');
             $table->date('birthday')->comment('誕生日');

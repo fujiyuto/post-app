@@ -88,7 +88,7 @@ class UserController extends Controller
     public function login(LoginRequest $request)
     {
         try {
-            $data = $this->userService->loginUser($request->email, $request->password);
+            $data = $this->userService->loginUser($request->user_name, $request->password);
 
             // セッション再生成
             // $request->session()->regenerate();

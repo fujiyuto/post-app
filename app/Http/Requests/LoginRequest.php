@@ -24,8 +24,8 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email'    => 'required|email:rfc,dns|max:255',
-            'password' => 'required|string|max:255',
+            'user_name' => 'required|string|max:255',
+            'password'  => 'required|string|max:255',
         ];
     }
 
@@ -38,8 +38,8 @@ class LoginRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'email'    => 'メールアドレス',
-            'password' => 'パスワード'
+            'user_name' => 'ユーザー名',
+            'password'  => 'パスワード'
         ];
     }
 

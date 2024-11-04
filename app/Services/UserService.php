@@ -145,11 +145,11 @@ class UserService
         ];
     }
 
-    public function loginUser(string $email, string $password)
+    public function loginUser(string $user_name, string $password)
     {
         $credentials = [
-            'email' => $email,
-            'password' => $password
+            'user_name' => $user_name,
+            'password'  => $password
         ];
 
         if (! Auth::attempt($credentials)) {
