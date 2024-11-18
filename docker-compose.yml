@@ -25,8 +25,7 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - post-app
-            - local-network
+            - default_network
         depends_on:
             - redis
             - meilisearch
@@ -39,7 +38,7 @@ services:
         volumes:
             - 'post-app-redis:/data'
         networks:
-            - post-app
+            - default_network
         healthcheck:
             test:
                 - CMD
@@ -56,7 +55,7 @@ services:
         volumes:
             - 'post-app-meilisearch:/meili_data'
         networks:
-            - post-app
+            - default_network
         healthcheck:
             test:
                 - CMD
@@ -72,7 +71,7 @@ services:
             - '${FORWARD_MAILPIT_PORT:-1025}:1025'
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
-            - post-app
+            - default_network
     selenium:
         image: seleniarm/standalone-chromium
         extra_hosts:
@@ -80,11 +79,9 @@ services:
         volumes:
             - '/dev/shm:/dev/shm'
         networks:
-            - post-app
+            - default_network
 networks:
-    post-app:
-        external: true
-    local-network:
+    default_network:
         external: true
 volumes:
     post-app-redis:
