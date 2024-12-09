@@ -64,9 +64,7 @@ class FollowService {
             ];
         }
 
-        return [
-            'data' => $response_data
-        ];
+        return $response_data;
     }
 
     public function getFollowers(User $user, string|null $keyword)
@@ -126,9 +124,7 @@ class FollowService {
             ];
         }
 
-        return [
-            'data' => $response_data
-        ];
+        return $response_data;
     }
 
     public function createFollows(int $follow_id, int $follower_id)
@@ -155,11 +151,7 @@ class FollowService {
             }
         }
 
-        return [
-            'data' => [
-                'ok' => true
-            ]
-        ];
+        return ['ok' => true];
     }
 
     public function deleteFollows(int $follow_id, int $follower_id)
@@ -178,10 +170,6 @@ class FollowService {
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
 
-        return [
-            'data' => [
-                'ok' => true
-            ]
-        ];
+        return ['ok' => true];
     }
 }

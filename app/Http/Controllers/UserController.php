@@ -91,8 +91,7 @@ class UserController extends Controller
             $data = $this->userService->loginUser($request->user_name, $request->password);
 
             // セッション再生成
-            // $request->session()->regenerate();
-            session()->regenerate();
+            $request->session()->regenerate();
 
             return response()->json($data);
 
