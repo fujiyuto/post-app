@@ -11,10 +11,11 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('prefectures', function (Blueprint $table) {
-            $table->id();
             $table->string('code', 2)->comment('都道府県コード');
             $table->string('prefecture_name')->comment('都道府県名');
             $table->timestamps();
+
+            $table->primary('code');
         });
     }
 

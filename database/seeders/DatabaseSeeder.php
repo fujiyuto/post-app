@@ -128,5 +128,10 @@ class DatabaseSeeder extends Seeder
                 ]);
             }
         }
+
+        $this->call([
+            PrefectureSeeder::class,
+            MunicipalitySeeder::class
+        ]);
     }
 }
