@@ -95,9 +95,7 @@ class PostService
             ];
         }
 
-        return [
-            'data' => $response_data
-        ];
+        return $response_data;
     }
 
     public function getPost(int $post_id)
@@ -242,9 +240,7 @@ class PostService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -277,9 +273,7 @@ class PostService
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 

@@ -55,9 +55,7 @@ class LikeService {
         }
 
         return [
-            'data' => [
-                'posts' => $response_data
-            ]
+            'posts' => $response_data
         ];
     }
 
@@ -79,9 +77,7 @@ class LikeService {
         }
 
         return [
-            'data' => [
-                'users' => $response_data
-            ]
+            'users' => $response_data
         ];
     }
 
@@ -97,9 +93,7 @@ class LikeService {
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 
@@ -119,9 +113,7 @@ class LikeService {
         }
 
         return [
-            'data' => [
-                'ok' => true
-            ]
+            'ok' => true
         ];
     }
 }

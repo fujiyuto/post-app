@@ -14,12 +14,6 @@ class FollowService {
     {
         $response_data = [];
 
-        // ユーザーデータの格納
-        $response_data['user'] = [
-            'name'   => $user->user_name,
-            'gender' => $user->gender
-        ];
-
         $follow_users = Follow::join('users', 'follows.follow_id', '=', 'users.id')
                             ->where('users.id', $user->id)
                             ->get();
@@ -70,12 +64,6 @@ class FollowService {
     public function getFollowers(User $user, string|null $keyword)
     {
         $response_data = [];
-
-        // ユーザーデータの格納
-        $response_data['user'] = [
-            'name'   => $user->user_name,
-            'gender' => $user->gender
-        ];
 
         // 取得したいユーザーのIDとfollows.follower_idでfollowersとusersを内部結合
         $follower_users = Follow::join('users', 'follows.follower_id', '=', 'users.id')
