@@ -26,7 +26,8 @@ return new class extends Migration
             $table->float('seating_duration', 4, 2)->default(1.0)->comment('席時間');
             $table->boolean('is_reservable')->default(false)->comment('予約可能');
             $table->integer('capacity')->unsigned()->default(0)->comment('上限客数');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

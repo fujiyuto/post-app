@@ -16,7 +16,8 @@ return new class () extends Migration {
             $table->foreignId('image_category_id')->constrained()->onDelete('cascade')->comment('画像種別ID');
             $table->string('image_url')->comment('画像URL');
             $table->unsignedTinyInteger('is_thumbnail')->default(0)->comment('サムネイル画像(1:サムネ画像、0:サムネ画像以外)');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

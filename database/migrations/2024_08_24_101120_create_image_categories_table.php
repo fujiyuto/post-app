@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('unique_cd', 4)->comment('ユニークコード');
             $table->string('name')->comment('名前');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

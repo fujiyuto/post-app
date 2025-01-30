@@ -18,7 +18,8 @@ return new class extends Migration
             $table->id();
             $table->integer('hour')->comment('時間');
             $table->integer('minute')->comment('分');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->index(['hour', 'minute']);
             $table->unique(['hour', 'minute']);

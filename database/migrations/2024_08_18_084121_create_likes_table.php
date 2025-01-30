@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id()->comment('いいねID');
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->comment('ユーザーID');
             $table->foreignId('post_id')->constrained()->onDelete('cascade')->comment('投稿ID');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

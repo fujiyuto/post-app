@@ -25,7 +25,8 @@ return new class extends Migration
             $table->string('image_url1')->nullable()->comment('画像URL1');
             $table->string('image_url2')->nullable()->comment('画像URL2');
             $table->string('image_url3')->nullable()->comment('画像URL3');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

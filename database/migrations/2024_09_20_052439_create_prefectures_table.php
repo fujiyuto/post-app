@@ -13,7 +13,8 @@ return new class () extends Migration {
         Schema::create('prefectures', function (Blueprint $table) {
             $table->string('code', 2)->comment('都道府県コード');
             $table->string('prefecture_name')->comment('都道府県名');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->primary('code');
         });

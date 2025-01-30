@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('restaurant_id')->constrained()->onDelete('cascade')->comment('店ID');
             $table->foreignId('genre_id')->constrained()->onDelete('cascade')->comment('ジャンルID');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

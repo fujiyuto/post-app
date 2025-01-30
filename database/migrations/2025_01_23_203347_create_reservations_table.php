@@ -24,10 +24,11 @@ return new class extends Migration
             $table->integer('num_of_people')->comment('予約人数');
             $table->enum('status', ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])->comment('予約状況');
             $table->text('notes')->nullable()->comment('特記事項');
-            $table->timestamps();
-            $table->foreignId('updated_by')->constrained(
+            $table->foreignId('updated_by')->nullable()->constrained(
                 table: 'users', indexName: 'reservations_updated_by'
             )->onDelete('cascade')->comment('更新者ID');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

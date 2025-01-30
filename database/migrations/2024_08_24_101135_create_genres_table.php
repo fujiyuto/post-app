@@ -16,7 +16,8 @@ return new class extends Migration
             $table->foreignId('genre_group_id')->constrained()->onDelete('cascade')->comment('ジャンルグループID');
             $table->string('unique_name')->unique()->comment('ユニーク名');
             $table->string('genre_name')->comment('名前');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

@@ -14,7 +14,8 @@ return new class () extends Migration {
             $table->id();
             $table->string('unique_name')->unique()->comment('ユニーク名');
             $table->string('group_name')->comment('グループ名');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
     }
 

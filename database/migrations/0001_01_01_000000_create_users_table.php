@@ -25,7 +25,8 @@ return new class () extends Migration {
             $table->integer('follow_num')->default(0)->comment('フォロー数');
             $table->integer('visited_num')->default(0)->comment('訪問した店の数');
             // $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });
 
         // Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -15,7 +15,8 @@ return new class extends Migration
             $table->string('code', 6)->comment('市区町村コード');
             $table->string('prefecture_code', 2)->comment('都道府県コード');
             $table->string('municipalities_name')->comment('市区町村名');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
 
             $table->primary('code');
         });
