@@ -8,12 +8,13 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\UserStoreRestaurantController;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\ReservationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+    return $request->session()->all();
+});
 
 Route::controller(UserController::class)->group(function () {
 
@@ -140,18 +141,18 @@ Route::controller(UserStoreRestaurantController::class)->group(function () {
 Route::controller(FollowController::class)->group(function () {
 
     Route::middleware('customAuth')->group(function () {
-        // フォローユーザー取得
-        Route::get('/follows/{user}', 'index_follow')->where('user', '[0-9]+')->name('follows.index_follow');
-
-        // フォロワーユーザー取得
-        Route::get('/followers/{user}', 'index_follower')->where('user', '[0-9]+')->name('follows.index_follower');
-
-        // ユーザーフォロー
-        Route::post('/follows', 'create')->name('follows.create');
-
-        // ユーザーアンフォロー
-        Route::delete('/follows/{user}', 'delete')->where('user', '[0-9]+')->name('follows.delete');
     });
+    // フォローユーザー取得
+    Route::get('/follows/{user}', 'index_follow')->where('user', '[0-9]+')->name('follows.index_follow');
+
+    // フォロワーユーザー取得
+    Route::get('/followers/{user}', 'index_follower')->where('user', '[0-9]+')->name('follows.index_follower');
+
+    // ユーザーフォロー
+    Route::post('/follows', 'create')->name('follows.create');
+
+    // ユーザーアンフォロー
+    Route::delete('/follows/{user}', 'delete')->where('user', '[0-9]+')->name('follows.delete');
 });
 
 Route::controller(TweetController::class)->group(function () {
@@ -172,4 +173,15 @@ Route::controller(TweetController::class)->group(function () {
 Route::controller(GenreController::class)->group(function () {
     // ジャンルリスト取得
     Route::get('/genres', 'index')->name('genres.index');
+});
+
+Route::controller(ReservationController::class)->group(function () {
+    // 予約詳細取得
+    Route::get('/reservations/{reservation}', 'show')->where('reservation', '[0-9]+')->name('reservations.show');
+    // 予約作成
+    Route::post('/reservations', 'create')->name('reservations.create');
+    // 予約内容編集
+    Route::patch('/reservations/{reservation}', 'edit')->where('reservation', '[0-9]+')->name('reservations.show');
+    // 予約状況編集
+    Route::patch('/reservations/{reservation}/status', 'edit_status')->where('reservation', '[0-9]+')->name('reservations.show');
 });
