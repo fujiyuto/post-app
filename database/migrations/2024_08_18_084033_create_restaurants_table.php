@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('restaurants', function (Blueprint $table) {
+            $table->comment('店テーブル');
+
             $table->id()->comment('店ID');
             $table->string('restaurant_name')->comment('名前');
             $table->string('zip_cd', 7)->comment('郵便番号');
@@ -26,6 +28,13 @@ return new class extends Migration
             $table->float('seating_duration', 4, 2)->default(1.0)->comment('席時間');
             $table->boolean('is_reservable')->default(false)->comment('予約可能');
             $table->integer('capacity')->unsigned()->default(0)->comment('上限客数');
+            $table->time('open_time')->nullable()->comment('営業開始時間');
+            $table->time('close_time')->nullable()->comment('営業終了時間');
+            $table->time('lunch_open_time')->nullable()->comment('昼営業開始時間');
+            $table->time('lunch_close_time')->nullable()->comment('昼営業終了時間');
+            $table->time('dinner_open_time')->nullable()->comment('夜営業開始時間');
+            $table->time('dinner_close_time')->nullable()->comment('夜営業終了時間');
+            $table->boolean('has_break_time')->default(0)->comment('中休みがあるか');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

@@ -20,7 +20,7 @@ return new class extends Migration
             )->onDelete('cascade')->comment('予約者ID');
             $table->foreignId('restaurant_id')->constrained()->onDelete('cascade')->comment('店ID');
             $table->date('reserve_date')->comment('予約日');
-            $table->foreignId('time_slot_id')->constrained()->onDelete('cascade')->comment('予約時間ID');
+            $table->time('reserve_time')->comment('予約時間');
             $table->integer('num_of_people')->comment('予約人数');
             $table->enum('status', ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])->comment('予約状況');
             $table->text('notes')->nullable()->comment('特記事項');

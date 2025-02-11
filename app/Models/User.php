@@ -55,19 +55,28 @@ class User extends Authenticatable
         self::USER_TYPE_OWNER    => '店主'
     ];
 
+    // 投稿テーブルとのリレーション
     public function posts(): HasMany
     {
         return $this->hasMany(Post::class);
     }
 
+    // いいねテーブルとのリレーション
     public function likes(): HasMany
     {
         return $this->hasMany(Like::class);
     }
 
+    // ユーザー保存店とのリレーション
     public function user_store_restaurants(): HasMany
     {
         return $this->hasMany(UserStoreRestaurant::class);
+    }
+
+    // 予約テーブルとのリレーション
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
     }
 
     public function toSearchableArray(): array
