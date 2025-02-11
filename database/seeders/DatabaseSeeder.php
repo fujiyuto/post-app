@@ -24,6 +24,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 都道府県データと時間帯マスタテーブルデータ作成
+        $this->call([
+            PrefectureSeeder::class,
+            MunicipalitySeeder::class
+        ]);
 
         // ユーザー作成
         $users = User::factory()->count(10)->create();
@@ -129,11 +134,6 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // 都道府県データと時間帯マスタテーブルデータ作成
-        $this->call([
-            PrefectureSeeder::class,
-            MunicipalitySeeder::class,
-            TimeSlotSeeder::class
-        ]);
+
     }
 }
