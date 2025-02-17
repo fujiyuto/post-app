@@ -16,6 +16,15 @@ servers:
     description: ステージング環境サーバー
   - url: https:://prod.sample.com/v1
     description: 本番環境サーバー
+tags:
+  - name: "post"
+    description: "PostControllerのメソッド"
+  - name: "restaurant"
+    description: "RestaurantControllerのメソッド"
+  - name: "genre"
+    description: "GenreControllerのメソッド"
+  - name: "reservation"
+    description: "ReservationControllerのメソッド"
 paths:
   /posts/restaurant/{restaurantId}:
     get:
@@ -101,8 +110,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetPostResponse'
-
-
   /restaurants:
     get:
       tags:
@@ -126,7 +133,7 @@ paths:
             type: string
       responses:
         '200':
-          description: RestaurantモデルとRestaurantに紐づくGenreモデルの配列の配列を返す
+          description: 店の一覧を返す。予約データは今日を含めた3日分を表示する。
           content:
             application/json:
               schema:
@@ -149,11 +156,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetRestaurantResponse'
-
-
-
-
-
   /genres:
     get:
       tags:
@@ -166,15 +168,241 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/GetGenresResponse'
-
-
-
-
-
-
+  /reservations:
+    get:
+      tags:
+        - reservation
+      summary: 予約データの詳細を返す
+      responses:
+        '200':
+          description: 予約テーブルとユーザー・店・時間帯マスタテーブルを内部結合したテーブルからデータを取得する。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReservationResponse'
+  /reservations/{reservationId}:
+    post:
+      tags:
+        - reservation
+      summary: 予約データを作成する
+      parameters:
+        - in: path
+          name: reservationId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 予約成功のレスポンスを返す。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 予約が完了しました。
+      requestBody:
+        description: 予約データ作成リクエスト
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationRequest'
+    patch:
+      tags:
+        - reservation
+      summary: 予約データの内容を更新する
+      parameters:
+        - in: path
+          name: reservationId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 更新後の予約データを返却する。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reserve_date:
+                    type: string
+                    description: 予約日
+                    example: '2025-01-01'
+                  reserve_time:
+                    type: string
+                    description: 予約時間
+                    example: '19:00'
+                  num_of_people:
+                    type: integer
+                    description: 予約人数
+                    example: 5
+                  notes:
+                    type: string
+                    description: 特記事項
+                    example: 小麦アレルギーです。
+      requestBody:
+        description: 予約内容更新のリクエスト
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditReservationRequest'
+  /reservations/{reservationId}/status:
+    patch:
+      tags:
+        - reservation
+      summary: 予約データの予約状況を更新する
+      parameters:
+        - in: path
+          name: reservationId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 更新後の予約状況を返却する。
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: object
+                    properties:
+                      label:
+                        description: 画面に表示する予約状況
+                        type: string
+                        enum:
+                          - 保留中
+                          - 予約確定
+                          - キャンセル済み
+                          - 来店済み
+                        example: 保留中
+                      value:
+                        description: コード値
+                        type: string
+                        enum:
+                          - PENDING
+                          - CONFIRMED
+                          - CANCELLED
+                          - COMPLETED
+                        example: PENDING
+      requestBody:
+        description: 予約状況更新リクエスト
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditReservationStatusRequest'
 
 components:
   schemas:
+    CreateReservationRequest:
+      description: 予約データ作成リクエスト
+      type: object
+      properties:
+        restaurant_id:
+          description: 店ID
+          type: integer
+          example: 1
+        reserve_date:
+          description: 予約日
+          type: string
+          example: '2025-01-01'
+        reserve_time:
+          description: 予約時間
+          type: string
+          example: '19:00'
+        num_of_people:
+          description: 予約人数
+          type: integer
+          example: 5
+        notes:
+          description: 特記事項
+          type: string
+          example: 小麦アレルギーです。
+    EditReservationRequest:
+      description: 予約データ更新リクエスト
+      type: object
+      properties:
+        reserve_date:
+          description: 予約日
+          type: string
+          example: '2025-01-01'
+        reserve_time:
+          description: 予約時間
+          type: string
+          example: '19:00'
+        num_of_people:
+          description: 予約人数
+          type: integer
+          example: 5
+        notes:
+          description: 特記事項
+          type: string
+          example: 小麦アレルギーです。
+    EditReservationStatusRequest:
+      description: 予約データ更新リクエスト
+      type: object
+      properties:
+        status:
+          description: 予約状況
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - CANCELLED
+            - COMPLETED
+          example: PENDING
+    GetReservationResponse:
+      type: object
+      required:
+        - 'reservation_id'
+        - 'reserved_by'
+        - 'reserve_date'
+        - reserve_hour'
+        - 'reserve_minute'
+        - 'num_of_people'
+        - 'status'
+        - 'notes'
+      properties:
+        reservation_id:
+          type: integer
+          description: 予約ID
+          example: 1
+        restaurant_name:
+          type: string
+          description: 予約した店の名前
+          example: たこ焼き屋
+        reserved_by:
+          type: string
+          description: 予約者名
+          example: test_user
+        reserve_date:
+          type: string
+          description: 予約日
+          example: '2025-01-01'
+        reserve_time:
+          type: string
+          description: 予約時間
+          example: 19:00
+        num_of_people:
+          type: integer
+          description: 予約人数
+          example: 5
+        status:
+          type: string
+          enum:
+            - '保留中'
+            - '予約確定'
+            - 'キャンセル済み'
+            - '来店済み'
+          description: 予約状況
+        notes:
+          type: string
+          description: 特記事項
+          example: "小麦アレルギーです。"
+
     GetGenresResponse:
       type: object
       additionalProperties:
@@ -211,6 +439,7 @@ components:
               - updated_at
               - thumbnail_image
               - genres
+              - reservable_list
             properties:
               id:
                 description: 店ID
@@ -262,6 +491,20 @@ components:
                       description: ジャンル名
                       type: string
                       example: genre_name_1
+              reservable_list:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    reserve_date:
+                      type: string
+                      description: 予約日
+                      example: '2025-01-01'
+                    is_reservable:
+                      type: boolean
+                      description: 予約可能か
+                      example: true
+
     GetRestaurantResponse:
       type: object
       required:
@@ -579,6 +822,7 @@ components:
           type: string
           description: 投稿日
           example: 2024-01-01
+
 
 
 
