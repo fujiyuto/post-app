@@ -6,11 +6,14 @@ use App\Exceptions\DataNotFoundException;
 use App\Exceptions\DataOperationException;
 use App\Models\Reservation;
 use App\Enums\Status;
+use App\Events\ReservationCreated;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use App\Events\ReservationStatusCancelled;
 
 class ReservationService
 {
-
     /**
      * 予約IDを受け取り、予約の詳細情報を返す
      *
@@ -83,12 +86,27 @@ class ReservationService
             'notes'         => $notes
         ];
 
-        $is_created = Reservation::create($insert_data);
+        //===== トランザクション処理開始 =====//
+        DB::beginTransaction();
+
+        $created_reservation = Reservation::create($insert_data);
 
         // DB登録
-        if ( !$is_created ) {
+        if ( !$created_reservation ) {
+            // ロールバック
+            DB::rollback();
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
+
+        // 予約状況データ更新イベント
+        $event_ok = event(new ReservationCreated($created_reservation));
+        if (!$event_ok) {
+            DB::rollback();
+            throw new DataOperationException('予約ができませんでした');
+        }
+
+        //===== トランザクションコミット =====//
+        DB::commit();
 
         return ['message' => '予約データが作成されました。'];
     }
@@ -145,10 +163,34 @@ class ReservationService
         // 更新
         $reservation->status = $status->name;
 
+        //===== トランザクション処理 =====//
+        DB::beginTransaction();
+
         // DBへ反映
         if ( !$reservation->save() ) {
+            DB::rollBack();
+            $context = [
+                'reservation_id'     => $reservation->id,
+                'reservation_status' => $status->name
+            ];
+            Log::debug("予約状況の更新に失敗しました。予約ID:{reservation_id}, 予約ステータス:{reservation_status}");
             throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
         }
+
+        // 予約ステータスがキャンセルに変更の場合のイベント
+        if ( $reservation->status === Reservation::STATUS_CANCELLED ) {
+            // 店予約状況データでキャンセルが出た分の人数を削除
+            $event_ok = event(new ReservationStatusCancelled($reservation));
+
+            // 更新できなかった場合はエラー
+            if ( !$event_ok ) {
+                DB::rollBack();
+                throw new DataOperationException('ERROR: Exception occur in '.__LINE__.' lines of '.basename(__CLASS__));
+            }
+        }
+
+        //===== トランザクションコミット  =====//
+        DB::commit();
 
         // レスポンスデータ
         $response_data = [

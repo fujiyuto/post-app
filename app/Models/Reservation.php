@@ -21,6 +21,11 @@ class Reservation extends Model
         'updated_by'
     ];
 
+    const STATUS_PENDING = 'PENDING';
+    const STATUS_CONFIRMED = 'CONFIRMED';
+    const STATUS_CANCELLED = 'CANCELLED';
+    const STATUS_COMPLETED = 'COMPLETED';
+
     // ユーザーテーブルとのリレーション
     public function user(): BelongsTo
     {

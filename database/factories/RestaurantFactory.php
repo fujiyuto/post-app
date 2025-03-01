@@ -16,7 +16,7 @@ class RestaurantFactory extends Factory
      */
     public function definition(): array
     {
-        return [
+        $insert_data = [
             'restaurant_name'  => fake()->realText(10),
             'zip_cd'           => fake()->postcode(),
             'address'          => fake()->prefecture() . fake()->city(),
@@ -27,8 +27,20 @@ class RestaurantFactory extends Factory
             'price_max'        => 4000,
             'seating_duration' => $this->randomSeatingDuration(),
             'is_reservable'    => true,
-            'capacity'         => random_int(1, 20)
+            'capacity'         => random_int(1, 20),
         ];
+
+        if ( random_int(0, 1) === 1 ) {
+            $insert_data['open_time'] = '19:00';
+            $insert_data['close_time'] = '21:00';
+        } else {
+            $insert_data['lunch_open_time']  = '12:00';
+            $insert_data['lunch_close_time']  = '16:00';
+            $insert_data['dinner_open_time'] = '19:00';
+            $insert_data['dinner_close_time'] = '21:00';
+        }
+
+        return $insert_data;
     }
 
     private function randomSeatingDuration(): float

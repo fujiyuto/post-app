@@ -29,6 +29,8 @@ return new class extends Migration
             )->onDelete('cascade')->comment('更新者ID');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
+
+            $table->index(['restaurant_id', 'reserve_date']);
         });
     }
 

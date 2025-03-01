@@ -68,6 +68,12 @@ class Restaurant extends Model
         return $this->hasMany(RestaurantHoliday::class);
     }
 
+    // 予約状況テーブルとのリレーション
+    public function restaurant_reservation_status(): HasMany
+    {
+        return $this->hasMany(RestaurantReservationStatus::class);
+    }
+
     public function toSearchableArray(): array
     {
         return [

@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Listeners;
+
+use App\Events\ReservationCreated;
+use App\Exceptions\DataOperationException;
+use App\Models\RestaurantReservationStatus;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
+use App\Models\Restaurant;
+
+class UpdateReservationStatus
+{
+    /**
+     * Create the event listener.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * 予約状況を新規予約で更新する。
+     *
+     * @param  ReservationCreated $event イベントクラス
+     * @return bool                      更新したかどうか
+     */
+    public function handle(ReservationCreated $event): bool
+    {
+        //店の予約状況取得
+        $where = [
+            'restaurant_id' => $event->reservation->restaurant_id,
+            'reserve_date'  => $event->reservation->reserve_date,
+            'is_reservable' => RestaurantReservationStatus::IS_RESERVABLE
+        ];
+        $restaurant_reservation_status = RestaurantReservationStatus::selectRaw('id, reserve_status_info, reserve_date')
+                                        ->where($where)
+                                        ->get();
+        // 店予約状況データ取得エラー
+        if (!$restaurant_reservation_status) {
+            $context = [
+                'restaurant_reservation_status_id' => $restaurant_reservation_status->id,
+            ];
+            Log::debug('店予約状況データの取得に失敗しました。予約状況ID:{restaurant_reservation_status_id}', $context);
+            return false;
+        }
+
+        // 予約された店を取得
+        $restaurant = Restaurant::selectRaw('restaurant_name, capacity, seating_duration')
+                                ->where('id', $event->reservation->restaurant_id)
+                                ->first();
+        // 店データ取得エラー
+        if (!$restaurant) {
+            $context = [
+                'restaurant_id' => $event->reservation->restaurant_id,
+            ];
+            Log::debug('店データの取得に失敗しました。店ID:{restaurant_id}', $context);
+            return false;
+        }
+
+        // 予約状況データ
+        $reservation_status_data = json_decode($restaurant_reservation_status->reserve_status_info, true);
+
+        // ループ回数
+        $loop_count = (int)($restaurant->seating_duration / 0.25);
+        $reserve_time = $$event->reservation->reserve_time;
+
+        for ($i = 0; $i < $loop_count; $i++) {
+            $reservation_time_info = $reservation_status_data[$reserve_time];
+
+            // 予約可能フラグがfalseの場合はエラー
+            if (!$reservation_time_info['available']) {
+                $context = [
+                    'restaurant_reservation_status_id' => $restaurant_reservation_status->id,
+                    'reserve_time'                     => $reserve_time
+                ];
+                Log::debug("予約可能フラグがfalseです。予約状況ID:{restaurant_reservation_status_id}, 時間帯:{reserve_time}");
+                return false;
+            }
+
+            // 予約人数を加算
+            $reservation_time_info['num_of_people'] += $event->reservation->num_of_people;
+
+            // 予約人数がキャパシティーを上回っていた場合エラー
+            if ($reservation_time_info['num_of_people'] > $restaurant->capacity) {
+                $log_context = [
+                    'restaurant_name' => $restaurant->restaurant_name,
+                    'capacity'        => $restaurant->capacity
+                ];
+                Log::debug('予約人数が店の許容範囲を超えています 店名:{restaurant_name}, 上限客数:{capacity}', $log_context);
+                return false;
+            }
+
+            // 予約状況データに反映
+            $reservation_status_data[$reserve_time] = $reservation_time_info;
+
+            // 次のループのために時間を15分加算
+            list($reserve_hour, $reserve_minute) = explode(':', $event->reservation->reserve_time);
+            $reserve_hour = (int)$reserve_hour;
+            $reserve_minute = (int)$reserve_minute;
+            $reserve_minute += 15;
+
+            // 15分加算した時に60になった場合は、時間に1を加算し、分を0にする
+            if ($reserve_minute === 60) {
+                $reserve_minute = 0;
+                $reserve_hour++;
+            }
+
+            //時間と分を文字列化
+            $reserve_time = Str::padLeft((string)$reserve_hour, 2, '0') . ':' . Str::padLeft((string)$reserve_minute, 2, '0');
+        }
+
+        // 予約状況更新
+        $restaurant_reservation_status->reserve_status_info = $reservation_status_data;
+        if ($restaurant_reservation_status->save()) {
+            // DBエラー
+            $context = [
+                'restaurant_reservation_status_id' => $restaurant_reservation_status->id
+            ];
+            Log::debug('予約状況の更新に失敗しました。予約状況ID:{restaurant_reservation_status_id}', $context);
+            return false;
+        }
+
+        return true;
+    }
+}
