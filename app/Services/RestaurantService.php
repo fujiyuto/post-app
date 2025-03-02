@@ -62,35 +62,10 @@ class RestaurantService
                                                                         ->whereIn('restaurant_id', $restaurant_id_list)
                                                                         ->where('reserve_date', $now->format('Y-m-d'))
                                                                         ->get();
-        /**
-         * どの店が何日に予約可能か連想配列を作成
-         * [
-         *     1 => [
-         *         [
-         *             'reserve_date   => '2025-01-01',
-         *             'is_reservable' => true
-         *         ],
-         *         [
-         *             'reserve_date   => '2025-01-02',
-         *             'is_reservable' => false
-         *         ],
-         *     ],
-         *     2 => [],
-         * ]
-         */
-        $reservable_info_list = [];
+        // key:店ID, value:予約可能フラグの連想配列を取得
+        $restaurant_reservable_list = [];
         foreach ($restaurant_reservation_status_data as $data) {
-            if (!array_key_exists($data->restaurant_id, $reservable_info_list)) {
-                $reservable_info_list[$data->restaurant_id] = [
-                    'reserve_date'  => $data->reserve_date,
-                    'is_reservable' => $data->is_reservable
-                ];
-            } else {
-                $reservable_info_list[$data->restaurant_id][] = [
-                    'reserve_date'  => $data->reserve_date,
-                    'is_reservable' => $data->is_reservable
-                ];
-            }
+            $restaurant_reservable_list[$data->restaurant_id] = $data->is_reservable;
         }
 
         $response_data = [];
@@ -98,7 +73,7 @@ class RestaurantService
             $update_datetime = new Carbon($restaurant['updated_at']);
             $update_date     = $update_datetime->format('Y-m-d');
             $response_data[] = [
-                'id' => $restaurant->id,
+                'id'              => $restaurant->id,
                 'restaurant_name' => $restaurant->restaurant_name,
                 'address'         => $restaurant->address,
                 'price_min'       => $restaurant->price_min,
@@ -108,7 +83,7 @@ class RestaurantService
                 'updated_at'      => $update_date,
                 'thumbnail_image' => $thumbnail_images[$restaurant->id],
                 'genres'          => $restaurant_genre_map[$restaurant->id],
-                'reservable_list' => $reservable_info_list
+                'today_reservable'      => $restaurant_reservable_list[$restaurant->id]
             ];
         }
 

@@ -8,7 +8,7 @@ use App\Http\Requests\ReservationEditRequest;
 use App\Http\Requests\ReservationStatusEditRequest;
 use App\Models\Reservation;
 use App\Services\ReservationService;
-use Illuminate\Http\Request;
+use App\Models\Restaurant;
 
 class ReservationController extends Controller
 {
@@ -90,6 +90,23 @@ class ReservationController extends Controller
     {
         try {
             $data = $this->reservationService->editReservationStatus($reservation, Status::{$request->status});
+
+            return $this->responseJson($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * 店の予約状況データ取得
+     *
+     * @param  Restaurant $restaurant 
+     * @return void
+     */
+    public function getRestaurantReservationStatus(Restaurant $restaurant)
+    {
+        try {
+            $data = $this->reservationService->getRestaurantReservationStatus($restaurant->id);
 
             return $this->responseJson($data);
         } catch (\Exception $e) {

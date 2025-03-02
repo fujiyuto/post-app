@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Events\ReservationStatusCancelled;
+use App\Models\RestaurantReservationStatus;
 
 class ReservationService
 {
@@ -199,6 +200,40 @@ class ReservationService
                 'value' => $status->name
             ]
         ];
+
+        return $response_data;
+    }
+
+    /**
+     * 店IDを受け取り、今日から2週間分の予約状況のデータを返す
+     *
+     * @param  integer $restaurant_id 店ID
+     * @return array                  予約状況データ
+     */
+    public function getRestaurantReservationStatus(int $restaurant_id): array
+    {
+        $where = [
+            'restaurant_id' => $restaurant_id,
+            'is_reservable' => RestaurantReservationStatus::IS_RESERVABLE
+        ];
+
+        // 予約状況データ取得
+        $restaurant_reservation_status = RestaurantReservationStatus::selectRaw('id, reserve_date, reserve_status_info')->where($where)->first();
+
+        // 取得できなかった場合エラー
+        if ( !$restaurant_reservation_status ) {
+            $context = [
+                'restaurant_reservation_status_id' => $restaurant_reservation_status->id
+            ];
+            Log::debug('予約状況のデータが取得できませんでした。予約状況ID:{restaurant_reservation_status_id}', $context);
+            throw new DataNotFoundException('予約状況の取得に失敗しました');
+        }
+
+        // データ整形
+        $response_data = [];
+        foreach ($restaurant_reservation_status as $data) {
+            $response_data[$data->reserve_date] = json_decode($data->reserve_status->info, true);
+        }
 
         return $response_data;
     }
