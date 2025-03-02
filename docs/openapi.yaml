@@ -249,6 +249,51 @@ paths:
             schema:
               $ref: '#/components/schemas/EditReservationRequest'
   /reservations/{reservationId}/status:
+    get:
+      tags:
+        - reservation
+      summary: 予約状況データの一覧を取得する
+      parameters:
+        - in: path
+          name: reservationId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 店IDと予約日から予約状況データを取得する
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetReservationStatusResponse'
+              example:
+                '2025-01-01':
+                  '19:00':
+                    'num_of_people': 5
+                    'available': true
+                  '19:15':
+                    'num_of_people': 5
+                    'available': true
+                  '19:30':
+                    'num_of_people': 5
+                    'available': true
+                  '19:45':
+                    'num_of_people': 5
+                    'available': true
+                '2025-01-02':
+                  '19:00':
+                    'num_of_people': 5
+                    'available': true
+                  '19:15':
+                    'num_of_people': 5
+                    'available': true
+                  '19:30':
+                    'num_of_people': 5
+                    'available': true
+                  '19:45':
+                    'num_of_people': 5
+                    'available': true
+
     patch:
       tags:
         - reservation
@@ -402,6 +447,23 @@ components:
           type: string
           description: 特記事項
           example: "小麦アレルギーです。"
+    GetReservationStatusResponse:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          properties:
+            num_of_people:
+              type: integer
+              description: 予約済み人数
+              example: 5
+            available:
+              type: boolean
+              description: 利用可能
+              example: true
+          required:
+            - num_of_people
+            - available
 
     GetGenresResponse:
       type: object
@@ -491,19 +553,10 @@ components:
                       description: ジャンル名
                       type: string
                       example: genre_name_1
-              reservable_list:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    reserve_date:
-                      type: string
-                      description: 予約日
-                      example: '2025-01-01'
-                    is_reservable:
-                      type: boolean
-                      description: 予約可能か
-                      example: true
+              today_reservable:
+                description: 当日予約可能か
+                type: boolean
+                example: true
 
     GetRestaurantResponse:
       type: object
